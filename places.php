@@ -10,3 +10,4 @@
  */
 
 require_once plugin_dir_path(__FILE__) . 'includes/post-types/place.php';
+require_once plugin_dir_path(__FILE__) . 'includes/blocks/map/map.php';

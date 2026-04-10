@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "places/map",
+  "title": "Map",
+  "category": "widgets",
+  "description": "A map of places",
+  "editorScript": "map-script",
+  "style": "map-style",
+  "textdomain": "places",
+  "icon": "location-alt",
+  "supports": {
+    "html": false
+  },
+  "render": "file:./render.php"
+}
