@@ -26,7 +26,6 @@ class SilverVoxFest_Place
         }
         update_post_meta($post_id, '_place_address', sanitize_text_field($_POST['_place_address'] ?? ''));
         update_post_meta($post_id, '_place_url', sanitize_text_field($_POST['_place_url'] ?? ''));
-        update_post_meta($post_id, '_place_category', sanitize_text_field($_POST['_place_category'] ?? ''));
 
         $lat = get_post_meta($post_id, '_place_lat', true);
         if ($lat == "") {
@@ -41,9 +40,8 @@ class SilverVoxFest_Place
     public function register_meta_boxes()
     {
         $meta_boxes = [
-            "Address"  => "address",
-            "URL"      => "url",
-            "Category" => "category"
+            "Address" => "address",
+            "URL"     => "url",
         ];
 
         foreach ($meta_boxes as $label => $id) {
@@ -81,26 +79,9 @@ class SilverVoxFest_Place
     <?php
     }
 
-    public function render_place_category_meta_box($post)
-    {
-        $options = ['alcohol', 'coffee', 'food', 'hotel', 'venue'];
-        $category = get_post_meta($post->ID, '_place_category', true);
-        ?>
-    <label>Category</label>
-    <select name="_place_category" id="_place_category">
-        <option value="">— Select —</option>
-        <?php foreach ($options as $option) : ?>
-            <option value="<?php echo esc_attr($option); ?>"
-                <?php selected($category, $option); ?>>
-                <?php echo esc_html(ucwords(str_replace('_', ' ', $option))); ?>
-            </option>
-        <?php endforeach; ?>
-    </select><?php
-    }
-
     public function register_rest_fields()
     {
-        $fields = ['address', 'lat', 'lng', 'url', 'category'];
+        $fields = ['address', 'lat', 'lng', 'url'];
         foreach ($fields as $field) {
             register_rest_field('place', $field, [
                 'get_callback' => function ($post) use ($field) {
@@ -118,6 +99,16 @@ class SilverVoxFest_Place
                 return wp_get_attachment_image_url($id, 'full');
             },
         ]);
+
+        register_rest_field('place', 'category', [
+        'get_callback' => function ($post) {
+            $terms = get_the_terms($post['id'], 'category');
+            if (empty($terms) || is_wp_error($terms)) {
+                return "";
+            }
+            return $terms[0]->name;
+        },
+    ]);
     }
 
     public function filter_rest_response($response, $post, $request)
@@ -215,8 +206,9 @@ class SilverVoxFest_Place
                 'editor',
                 'thumbnail',
             ],
-            'menu_icon' => 'dashicons-location-alt',
-            'rewrite'   => ['slug' => 'places'],
+            'menu_icon'  => 'dashicons-location-alt',
+            'rewrite'    => ['slug' => 'places'],
+            'taxonomies' => ['category']
         ];
 
         register_post_type('place', $args);
