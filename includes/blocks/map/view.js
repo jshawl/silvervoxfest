@@ -41,7 +41,7 @@
           options.element = customMarker("🍻");
         }
         if (location.type === "food") {
-          options.element = customMarker("🍔");
+          options.element = customMarker("🍽️");
         }
         if (location.type === "hotel") {
           options.element = customMarker("🏨");

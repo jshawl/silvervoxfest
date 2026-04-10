@@ -38,7 +38,12 @@
 }
 
 [class^="svf-marker"] {
-  font-size: 2rem;
+  font-size: 30px;
+}
+
+[class^="svf-marker"] img {
+  margin: 0 !important;
+  transform: translateY(-5px);
 }
 
 .mapboxgl-popup-close-button {

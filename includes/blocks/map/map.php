@@ -20,6 +20,8 @@ function places_map_register()
         false
     );
 
+    wp_enqueue_style('dashicons');
+
     wp_register_script(
         'map-editor-script',
         PLACES_MAP_URL . 'editor.js',
