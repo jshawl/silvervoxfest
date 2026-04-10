@@ -83,7 +83,7 @@ class SilverVoxFest_Place
 
     public function render_place_category_meta_box($post)
     {
-        $options = ['venue', 'food', 'alcohol', 'hotel'];
+        $options = ['alcohol', 'coffee', 'food', 'hotel', 'venue'];
         $category = get_post_meta($post->ID, '_place_category', true);
         ?>
     <label>Category</label>
