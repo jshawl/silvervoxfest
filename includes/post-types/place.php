@@ -211,11 +211,12 @@ class SilverVoxFest_Place
         ];
 
         register_taxonomy('type', 'place', [
-            'label'        => 'Place Type',
-            'hierarchical' => false,
-            'public'       => true,
-            'show_ui'      => true,
-            'rewrite'      => ['slug' => 'type'],
+            'label'             => 'Place Type',
+            'hierarchical'      => false,
+            'public'            => true,
+            'show_ui'           => true,
+            'rewrite'           => ['slug' => 'type'],
+            'show_admin_column' => true
         ]);
         register_post_type('place', $args);
     }
