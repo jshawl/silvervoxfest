@@ -55,7 +55,7 @@
           .setPopup(
             new mapboxgl.Popup({ focusAfterOpen: false }).setHTML(
               `<h3>${location.title.rendered}</h3>
-                   <p>${location.content.rendered ?? ""}</p>
+                   ${location.content.rendered ?? ""}
                    <p>${location.address} <a href='${location.url}'>${location.url}</a></p>`,
             ),
           )

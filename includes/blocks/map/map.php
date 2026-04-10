@@ -29,12 +29,12 @@ function places_map_register()
     );
 
     wp_register_script(
-        'map-script',
-        PLACES_MAP_URL . 'script.js',
-        [ 'wp-blocks', 'wp-element', 'wp-block-editor' ],
-        filemtime(PLACES_MAP_DIR . 'script.js'),
+        'map-view-script',
+        PLACES_MAP_URL . 'view.js',
+        [],
+        filemtime(PLACES_MAP_DIR . 'view.js'),
         true,
-        ['map-editor-script']
+        []
     );
 
     wp_enqueue_script(

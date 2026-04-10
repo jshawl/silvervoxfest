@@ -27,6 +27,12 @@
   display: block;
 }
 
+.mapboxgl-popup-content p {
+  margin: 0 !important;
+  font-size: 1em !important;
+  line-height: 1;
+}
+
 .svf-marker-alcohol {
   font-size: 3.5rem;
 }
@@ -36,7 +42,8 @@
 }
 
 .mapboxgl-popup-close-button {
-  padding: 0;
+  padding: 0 !important;
+  margin: 0 !important;
   background-color: white !important;
 }
 
