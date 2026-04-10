@@ -100,9 +100,9 @@ class SilverVoxFest_Place
             },
         ]);
 
-        register_rest_field('place', 'category', [
+        register_rest_field('place', 'type', [
         'get_callback' => function ($post) {
-            $terms = get_the_terms($post['id'], 'category');
+            $terms = get_the_terms($post['id'], 'type');
             if (empty($terms) || is_wp_error($terms)) {
                 return "";
             }
@@ -113,7 +113,7 @@ class SilverVoxFest_Place
 
     public function filter_rest_response($response, $post, $request)
     {
-        $allowed = ['title', 'address', 'url', 'image', 'category', 'lat', 'lng', 'content'];
+        $allowed = ['title', 'address', 'url', 'image', 'type', 'lat', 'lng', 'content'];
 
         $data = $response->get_data();
         $filtered = array_intersect_key($data, array_flip($allowed));
@@ -206,11 +206,17 @@ class SilverVoxFest_Place
                 'editor',
                 'thumbnail',
             ],
-            'menu_icon'  => 'dashicons-location-alt',
-            'rewrite'    => ['slug' => 'places'],
-            'taxonomies' => ['category']
+            'menu_icon' => 'dashicons-location-alt',
+            'rewrite'   => ['slug' => 'places'],
         ];
 
+        register_taxonomy('type', 'place', [
+            'label'        => 'Place Type',
+            'hierarchical' => false,
+            'public'       => true,
+            'show_ui'      => true,
+            'rewrite'      => ['slug' => 'type'],
+        ]);
         register_post_type('place', $args);
     }
 }
