@@ -13,11 +13,35 @@ function places_map_register()
         filemtime(PLACES_MAP_DIR . 'style.css')
     );
 
+    wp_enqueue_style(
+        'map-mapbox-style',
+        'https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.css',
+        [],
+        false
+    );
+
+    wp_register_script(
+        'map-editor-script',
+        PLACES_MAP_URL . 'editor.js',
+        [ 'wp-blocks', 'wp-element', 'wp-block-editor' ],
+        filemtime(PLACES_MAP_DIR . 'editor.js'),
+        true
+    );
+
     wp_register_script(
         'map-script',
         PLACES_MAP_URL . 'script.js',
         [ 'wp-blocks', 'wp-element', 'wp-block-editor' ],
         filemtime(PLACES_MAP_DIR . 'script.js'),
+        true,
+        ['map-editor-script']
+    );
+
+    wp_enqueue_script(
+        'map-mapbox-script',
+        'https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.js',
+        [],
+        false,
         true
     );
 

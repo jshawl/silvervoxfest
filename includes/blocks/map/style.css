@@ -1,3 +1,45 @@
-.red {
-  color: red;
+#map-wrapper-outer {
+  display: "flex";
+  justify-content: center;
+  align-items: center;
+}
+#map {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+#map-wrapper-inner {
+  position: relative;
+  height: 500px;
+  width: 100%;
+}
+
+.mapboxgl-popup-content {
+  width: 20rem;
+}
+
+.mapboxgl-popup-content * {
+  margin: 0;
+}
+
+.mapboxgl-popup-content a {
+  display: block;
+}
+
+.svf-marker-alcohol {
+  font-size: 3.5rem;
+}
+
+[class^="svf-marker"] {
+  font-size: 2rem;
+}
+
+.mapboxgl-popup-close-button {
+  padding: 0;
+  background-color: white !important;
+}
+
+#map h3 {
+  font-size: 1rem;
 }

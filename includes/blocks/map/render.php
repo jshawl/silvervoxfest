@@ -4,6 +4,10 @@
 /** @var WP_Block $block      */
 ?>
 
-<p <?php echo get_block_wrapper_attributes([ 'class' => 'red' ]) ?>>
-    map
-</p>
+<div <?php echo get_block_wrapper_attributes() ?>>
+  <div id="map-wrapper-outer">
+    <div id="map-wrapper-inner">
+      <div id="map"></div>
+    </div>
+  </div>
+</div>
