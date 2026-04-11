@@ -1,5 +1,5 @@
 import { initializeMap, fitBounds } from "@places/map";
-import { createMarkers, filterMarkers } from "@places/marker";
+import { createMarkers, closePopups } from "@places/marker";
 import { initializeFilter, collapseFilter } from "@places/filter";
 
 let markers = [];
@@ -15,17 +15,14 @@ initializeMap({
     fitBounds({ map, locations });
     initializeFilter({
       locations,
-      onSelect: (type) => {
-        const filteredMarkers = filterMarkers({ type });
-        const filteredLocations = filteredMarkers.map(
-          ({ location }) => location,
-        );
+      onSelect: ({ filteredLocations }) => {
         fitBounds({ map, locations: filteredLocations });
       },
     });
   },
   onMapClick: (map) => {
     collapseFilter();
+    closePopups();
     markers.forEach(({ marker }) => {
       marker.getElement().style.display = "block";
     });

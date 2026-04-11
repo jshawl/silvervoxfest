@@ -6,6 +6,7 @@ export const createElement = ({ type, emoji }) => {
 };
 
 let markers = [];
+export const getMarkers = () => markers;
 
 export const createMarkers = ({ locations }) => {
   locations.forEach((location) => {
@@ -44,23 +45,14 @@ export const createMarker = (location) => {
     );
   marker.getElement().addEventListener("click", (e) => {
     e.stopPropagation();
-    markers.forEach(({ marker }) => {
-      marker.getPopup()?.remove();
-    });
+    closePopups();
     marker.togglePopup();
   });
   return marker;
 };
 
-export const filterMarkers = ({ type }) => {
+export const closePopups = () => {
   markers.forEach(({ marker }) => {
-    marker.getElement().style.display = "none";
+    marker.getPopup()?.remove();
   });
-  const filteredMarkers = markers.filter(
-    ({ location }) => location.type === type,
-  );
-  filteredMarkers.forEach(({ marker }) => {
-    marker.getElement().style.display = "block";
-  });
-  return filteredMarkers;
 };
