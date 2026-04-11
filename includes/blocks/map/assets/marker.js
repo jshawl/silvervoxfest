@@ -5,26 +5,32 @@ export const createElement = ({ type, emoji }) => {
   return element;
 };
 
+let markers = [];
+
+export const createMarkers = ({ locations }) => {
+  locations.forEach((location) => {
+    markers.push({ marker: createMarker(location), location });
+  });
+  return markers;
+};
+
+export const ICON_MAP = {
+  coffee: { emoji: "☕️", label: "Coffee Shops" },
+  alcohol: { emoji: "🍻", label: "Bars" },
+  food: { emoji: "🍽️", label: "Restaurants" },
+  hotel: { emoji: "🏨", label: "Hotels" },
+  venue: { emoji: "🎭", label: "Venues" },
+};
+
 export const createMarker = (location) => {
-  const options = {};
+  const options = {
+    element: createElement({
+      type: location.type,
+      emoji: ICON_MAP[location.type].emoji,
+    }),
+  };
 
-  if (location.type === "coffee") {
-    options.element = createElement({ type: location.type, emoji: "☕️" });
-  }
-  if (location.type === "alcohol") {
-    options.element = createElement({ type: location.type, emoji: "🍻" });
-  }
-  if (location.type === "food") {
-    options.element = createElement({ type: location.type, emoji: "🍽️" });
-  }
-  if (location.type === "hotel") {
-    options.element = createElement({ type: location.type, emoji: "🏨" });
-  }
-  if (location.type === "venue") {
-    options.element = createElement({ type: location.type, emoji: "🎭" });
-  }
-
-  return new mapboxgl.Marker(options)
+  const marker = new mapboxgl.Marker(options)
     .setLngLat([location.lng, location.lat])
     .setPopup(
       new mapboxgl.Popup({ focusAfterOpen: false }).setHTML(
@@ -36,4 +42,25 @@ export const createMarker = (location) => {
                <p><a href='${location.url}' target='_blank'>${location.url}</a></p>`,
       ),
     );
+  marker.getElement().addEventListener("click", (e) => {
+    e.stopPropagation();
+    markers.forEach(({ marker }) => {
+      marker.getPopup()?.remove();
+    });
+    marker.togglePopup();
+  });
+  return marker;
+};
+
+export const filterMarkers = ({ type }) => {
+  markers.forEach(({ marker }) => {
+    marker.getElement().style.display = "none";
+  });
+  const filteredMarkers = markers.filter(
+    ({ location }) => location.type === type,
+  );
+  filteredMarkers.forEach(({ marker }) => {
+    marker.getElement().style.display = "block";
+  });
+  return filteredMarkers;
 };

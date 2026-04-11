@@ -45,9 +45,16 @@ function places_map_register()
     );
 
     wp_register_script_module(
+        '@places/filter',
+        PLACES_MAP_URL . 'assets/filter.js',
+        [],
+        filemtime(PLACES_MAP_DIR . 'assets/filter.js')
+    );
+
+    wp_register_script_module(
         '@places/view',
         PLACES_MAP_URL . 'assets/view.js',
-        ['@places/map', '@places/marker'],
+        ['@places/map', '@places/marker', '@places/filter'],
         filemtime(PLACES_MAP_DIR . 'assets/view.js')
     );
     wp_enqueue_script_module('@places/view');

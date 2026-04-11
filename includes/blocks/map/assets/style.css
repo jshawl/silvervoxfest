@@ -2,6 +2,7 @@
   display: "flex";
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 #map {
   height: 100%;
@@ -11,7 +12,7 @@
 
 #map-wrapper-inner {
   position: relative;
-  height: 500px;
+  height: 800px;
   width: 100%;
 }
 
@@ -53,4 +54,46 @@
 
 #map h3 {
   font-size: 1rem;
+}
+
+.map-filter {
+  background: #fff;
+  position: absolute;
+  z-index: 1000;
+  width: 150px;
+  left: 10px;
+  top: 10px;
+  line-height: 10px;
+  padding: 10px;
+}
+
+.map-filter .filter-button {
+  line-height: 1;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.map-filter .content {
+  display: none;
+}
+
+.map-filter.expanded {
+  width: 300px;
+}
+
+.map-filter.expanded .content {
+  display: block;
+}
+
+.map-filter input {
+  font-size: 14px;
+  margin: 0 !important;
+  outline-offset: 0 !important;
+  border: none !important;
+  width: 100%;
+  padding: 2px !important;
+}
+
+.wp-block-places-map {
+  max-width: 1000000px !important;
 }

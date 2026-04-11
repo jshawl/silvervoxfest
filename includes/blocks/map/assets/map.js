@@ -2,14 +2,14 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoiYW1ibGVhcHAiLCJhIjoiY21ucTViOTQyMDQyNzJxb2J6ODB4bWFwdiJ9.mfpPxQJXotqvIpUxXSZXjw";
 let map;
 
+const fitBoundsOptions = { padding: 200 };
+
 export const initializeMap = ({ onMapClick, onMapLoad }) => {
   map = new mapboxgl.Map({
     container: "map",
     center: [-77.41054, 39.41427],
-    zoom: 12,
-    fitBoundsOptions: {
-      padding: 15, // padding to keep the bounds away from the edge of the map
-    },
+    fitBoundsOptions,
+    zoom: 15,
     style: "mapbox://styles/mapbox/standard",
     config: {
       basemap: {
@@ -20,7 +20,7 @@ export const initializeMap = ({ onMapClick, onMapLoad }) => {
   });
 
   map.on("load", async () => onMapLoad(map));
-  map.on("click", onMapClick);
+  map.on("click", () => onMapClick(map));
 };
 
 export const fitBounds = ({ map, locations }) => {
@@ -33,7 +33,5 @@ export const fitBounds = ({ map, locations }) => {
       [locations[0].lng, locations[0].lat],
     ),
   );
-  map.fitBounds(bounds, {
-    padding: 50, // px of breathing room around the edges
-  });
+  map.fitBounds(bounds, fitBoundsOptions);
 };
