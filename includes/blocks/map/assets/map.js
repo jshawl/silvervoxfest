@@ -10,6 +10,7 @@ export const initializeMap = ({ onMapClick, onMapLoad }) => {
     center: [-77.41054, 39.41427],
     fitBoundsOptions,
     zoom: 15,
+    maxZoom: 17,
     style: "mapbox://styles/mapbox/standard",
     config: {
       basemap: {

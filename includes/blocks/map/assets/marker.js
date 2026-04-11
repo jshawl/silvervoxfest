@@ -53,6 +53,8 @@ export const createMarker = (location) => {
 
 export const closePopups = () => {
   markers.forEach(({ marker }) => {
-    marker.getPopup()?.remove();
+    if (marker.getPopup()?.isOpen()) {
+      marker.togglePopup();
+    }
   });
 };
