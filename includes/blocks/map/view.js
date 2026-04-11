@@ -55,8 +55,11 @@
           .setPopup(
             new mapboxgl.Popup({ focusAfterOpen: false }).setHTML(
               `<h3>${location.title.rendered}</h3>
-                   ${location.content.rendered ?? ""}
-                   <p>${location.address} <a href='${location.url}'>${location.url}</a></p>`,
+               ${location.content.rendered ?? ""}
+               <p>
+                <a href='https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}' target='_blank'>${location.address}</a>
+               </p>
+               <p><a href='${location.url}' target='_blank'>${location.url}</a></p>`,
             ),
           )
           .addTo(map);

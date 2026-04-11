@@ -15,10 +15,6 @@
   width: 100%;
 }
 
-.mapboxgl-popup-content {
-  width: 20rem;
-}
-
 .mapboxgl-popup-content * {
   margin: 0;
 }
@@ -28,9 +24,9 @@
 }
 
 .mapboxgl-popup-content p {
-  margin: 0 !important;
+  margin: 0.5rem 0 !important;
   font-size: 1em !important;
-  line-height: 1;
+  line-height: 1.25;
 }
 
 .svf-marker-alcohol {
@@ -50,6 +46,9 @@
   padding: 0 !important;
   margin: 0 !important;
   background-color: white !important;
+  font-size: 20px;
+  line-height: 12px;
+  padding: 5px !important;
 }
 
 #map h3 {
