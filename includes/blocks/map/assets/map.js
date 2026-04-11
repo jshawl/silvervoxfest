@@ -2,7 +2,7 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoiYW1ibGVhcHAiLCJhIjoiY21ucTViOTQyMDQyNzJxb2J6ODB4bWFwdiJ9.mfpPxQJXotqvIpUxXSZXjw";
 let map;
 
-export const initializeMap = ({ onMapLoad }) => {
+export const initializeMap = ({ onMapClick, onMapLoad }) => {
   map = new mapboxgl.Map({
     container: "map",
     center: [-77.41054, 39.41427],
@@ -20,6 +20,7 @@ export const initializeMap = ({ onMapLoad }) => {
   });
 
   map.on("load", async () => onMapLoad(map));
+  map.on("click", onMapClick);
 };
 
 export const fitBounds = ({ map, locations }) => {
