@@ -8,9 +8,9 @@ function places_map_register()
 {
     wp_register_style(
         'map-style',
-        PLACES_MAP_URL . 'style.css',
+        PLACES_MAP_URL . 'assets/style.css',
         [],
-        filemtime(PLACES_MAP_DIR . 'style.css')
+        filemtime(PLACES_MAP_DIR . 'assets/style.css')
     );
 
     wp_enqueue_style(
@@ -24,20 +24,33 @@ function places_map_register()
 
     wp_register_script(
         'map-editor-script',
-        PLACES_MAP_URL . 'editor.js',
+        PLACES_MAP_URL . 'assets/editor.js',
         [ 'wp-blocks', 'wp-element', 'wp-block-editor' ],
-        filemtime(PLACES_MAP_DIR . 'editor.js'),
+        filemtime(PLACES_MAP_DIR . 'assets/editor.js'),
         true
     );
 
-    wp_register_script(
-        'map-view-script',
-        PLACES_MAP_URL . 'view.js',
+    wp_register_script_module(
+        '@places/map',
+        PLACES_MAP_URL . 'assets/map.js',
         [],
-        filemtime(PLACES_MAP_DIR . 'view.js'),
-        true,
-        []
+        filemtime(PLACES_MAP_DIR . 'assets/map.js')
     );
+
+    wp_register_script_module(
+        '@places/marker',
+        PLACES_MAP_URL . 'assets/marker.js',
+        [],
+        filemtime(PLACES_MAP_DIR . 'assets/marker.js')
+    );
+
+    wp_register_script_module(
+        '@places/view',
+        PLACES_MAP_URL . 'assets/view.js',
+        ['@places/map', '@places/marker'],
+        filemtime(PLACES_MAP_DIR . 'assets/view.js')
+    );
+    wp_enqueue_script_module('@places/view');
 
     wp_enqueue_script(
         'map-mapbox-script',
