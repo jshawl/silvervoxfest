@@ -1,4 +1,4 @@
-const createElement = ({ type, emoji }) => {
+export const createElement = ({ type, emoji }) => {
   const element = document.createElement("div");
   element.classList.add(`svf-marker-${type}`);
   element.innerHTML = emoji;
