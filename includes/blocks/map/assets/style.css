@@ -70,13 +70,13 @@
   line-height: 10px;
 }
 
-.map-filter .filter-button {
+.map-filter .filter-type-button {
   line-height: 1;
   cursor: pointer;
   padding: 5px;
 }
 
-.map-filter .filter-location {
+.map-filter .filter-location-button {
   font-size: 14px;
   cursor: pointer;
 }

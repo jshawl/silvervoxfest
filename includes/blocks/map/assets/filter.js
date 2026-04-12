@@ -1,114 +1,122 @@
-import { ICON_MAP, getMarkers, closePopups } from "@places/marker";
+import { ICON_MAP, closePopups } from "@places/marker";
 
 export const getFilterContainer = () => document.querySelector(".map-filter");
 
 const getLocationTypes = (locations) =>
-  locations
-    .reduce((acc, el) => {
-      if (!acc.includes(el.type)) {
-        acc.push(el.type);
-      }
-      return acc;
-    }, [])
-    .sort((a, b) => a.localeCompare(b));
+  [...new Set(locations.map((l) => l.type))].sort((a, b) => a.localeCompare(b));
 
-const onFilterContainerClick =
-  ({ onSelect }) =>
-  () => {
-    closePopups();
-    const el = getFilterContainer();
-    el.classList.add("expanded");
-    const buttons = document.querySelectorAll(".filter-button");
-    buttons.forEach((button) => {
-      button.parentElement.style.display = "block";
-    });
-    document.querySelectorAll(".filter-location").forEach((locel) => {
-      locel.style.display = "none";
-    });
-    const filteredMarkers = filterMarkers({
-      all: true,
-      markers: getMarkers(),
-    });
-    const filteredLocations = filteredMarkers.map(({ location }) => location);
-    onSelect({ filteredLocations });
-  };
+const setFilterTypeButtonsVisible = (visible) => {
+  const buttons = document.querySelectorAll(".filter-type-button");
+  buttons.forEach((button) => {
+    button.parentElement.style.display = visible ? "block" : "none";
+  });
+};
 
-export const onFilterButtonClick =
-  ({ type, onSelect, button }) =>
+const hideFilterLocationButtons = () => {
+  document.querySelectorAll(".filter-location-button").forEach((locel) => {
+    locel.style.display = "none";
+  });
+};
+
+const createFilterHandler =
+  ({ getFilter, onSelect, sideEffect, markers }) =>
   (e) => {
-    e.stopPropagation();
+    e?.stopPropagation();
     closePopups();
-    const buttons = document.querySelectorAll(".filter-button");
-    buttons.forEach((button) => {
-      button.parentElement.style.display = "none";
-    });
-    button.parentElement.style.display = "block";
-    document.querySelectorAll(".filter-location").forEach((locel) => {
-      locel.style.display = "none";
-    });
-    const locations = button.parentElement.childNodes;
-    locations.forEach((location) => {
-      location.style.display = "block";
-    });
     const filteredMarkers = filterMarkers({
-      type,
-      markers: getMarkers(),
+      ...getFilter(),
+      markers,
     });
-    const filteredLocations = filteredMarkers.map(({ location }) => location);
-    onSelect({ filteredLocations });
+    sideEffect?.({ filteredMarkers });
+    onSelect({
+      filteredLocations: filteredMarkers.map(({ location }) => location),
+    });
   };
 
-const createFilterButton = ({ type, onSelect }) => {
+const createFilterTypeButton = ({ type, onSelect, markers }) => {
   const button = document.createElement("div");
-  button.classList.add("filter-button");
+  button.classList.add("filter-type-button");
   button.innerHTML = `${ICON_MAP[type].emoji} ${ICON_MAP[type].label}`;
   button.addEventListener(
     "click",
-    onFilterButtonClick({ type, onSelect, button }),
+    createFilterHandler({
+      markers,
+      getFilter: () => ({ type }),
+      onSelect,
+      sideEffect: () => {
+        setFilterTypeButtonsVisible(false);
+        button.parentElement.style.display = "block";
+        hideFilterLocationButtons();
+        const locations = button.parentElement.childNodes;
+        locations.forEach((location) => {
+          location.style.display = "block";
+        });
+      },
+    }),
   );
   return button;
 };
 
-const createFilterLocation = ({ location, onSelect }) => {
-  const el = document.createElement("div");
-  el.classList.add("filter-location");
-  el.innerHTML = location.title.rendered;
-  el.style.display = "none";
-  el.addEventListener("click", (e) => {
-    e.stopPropagation();
-    closePopups();
-    const filteredMarkers = filterMarkers({
-      title: location.title,
-      markers: getMarkers(),
-    });
-    const popup = filteredMarkers[0].marker.getPopup();
-    if (!popup.isOpen()) {
-      filteredMarkers[0].marker.togglePopup();
-    }
-    const filteredLocations = filteredMarkers.map(({ location }) => location);
-    onSelect({ filteredLocations });
-  });
-  return el;
+const createFilterLocationButton = ({
+  marker,
+  location,
+  onSelect,
+  markers,
+}) => {
+  const button = document.createElement("div");
+  button.classList.add("filter-location-button");
+  button.innerHTML = location.title.rendered;
+  button.style.display = "none";
+  button.addEventListener(
+    "click",
+    createFilterHandler({
+      markers,
+      getFilter: () => ({ title: location.title }),
+      onSelect,
+      sideEffect: () => {
+        const popup = marker.getPopup();
+        if (!popup.isOpen()) {
+          setTimeout(() => {
+            marker.togglePopup();
+          }, 500);
+        }
+      },
+    }),
+  );
+  return button;
 };
 
-let locations;
-export const initializeFilter = ({ locations: fetchedLocations, onSelect }) => {
-  locations = fetchedLocations;
+export const initializeFilter = ({ locations, markers, onSelect }) => {
   const el = getFilterContainer();
-  el.addEventListener("click", onFilterContainerClick({ onSelect }));
+  el.addEventListener(
+    "click",
+    createFilterHandler({
+      markers,
+      getFilter: () => ({ all: true }),
+      onSelect,
+      sideEffect: () => {
+        el.classList.add("expanded");
+        setFilterTypeButtonsVisible(true);
+        hideFilterLocationButtons();
+      },
+    }),
+  );
 
   const list = document.createElement("div");
   list.classList.add("content");
-
   getLocationTypes(locations).forEach((type) => {
     const group = document.createElement("div");
-    group.append(createFilterButton({ type, onSelect }));
+    group.append(createFilterTypeButton({ type, onSelect, markers }));
 
-    const locationsForType = locations
-      .filter((location) => location.type === type)
-      .sort((a, b) => a.title.rendered.localeCompare(b.title.rendered));
-    locationsForType.forEach((location) => {
-      group.append(createFilterLocation({ location, onSelect }));
+    const markersForType = markers
+      .filter(({ location }) => location.type === type)
+      .sort((a, b) =>
+        a.location.title.rendered.localeCompare(b.location.title.rendered),
+      );
+    markersForType.forEach(({ marker, location }) => {
+      group.append(
+        createFilterLocationButton({ marker, markers, location, onSelect }),
+      );
     });
     list.append(group);
   });
@@ -118,12 +126,16 @@ export const initializeFilter = ({ locations: fetchedLocations, onSelect }) => {
 export const collapseFilter = () =>
   getFilterContainer().classList.remove("expanded");
 
-export const filterMarkers = ({ all, type, title, markers }) =>
-  markers.filter(({ location, marker }) => {
-    marker.getElement().style.display = "none";
-    if (location.type === type || location.title === title || all) {
-      marker.getElement().style.display = "block";
-      return true;
-    }
-    return false;
-  });
+export const filterMarkers = ({ all, type, title, markers }) => {
+  const filtered = markers.filter(
+    ({ location }) => all || location.type === type || location.title === title,
+  );
+  const filteredSet = new Set(filtered.map(({ marker }) => marker));
+  markers.forEach(
+    ({ marker }) =>
+      (marker.getElement().style.display = filteredSet.has(marker)
+        ? "block"
+        : "none"),
+  );
+  return filtered;
+};

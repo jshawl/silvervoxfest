@@ -15,6 +15,7 @@ initializeMap({
     fitBounds({ map, locations });
     initializeFilter({
       locations,
+      markers,
       onSelect: ({ filteredLocations }) => {
         fitBounds({ map, locations: filteredLocations });
       },

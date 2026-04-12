@@ -6,7 +6,7 @@ import {
   collapseFilter,
   getFilterContainer,
   initializeFilter,
-  onFilterButtonClick,
+  onFilterTypeButtonClick,
 } from "./filter";
 
 import { getMarkers } from "@places/marker";
@@ -24,12 +24,23 @@ describe("filter", () => {
     { type: "alcohol", title: { rendered: "Turnt town" } },
     { type: "coffee", title: { rendered: "Joe's Joe" } },
   ];
+  const marker = {
+    getElement: () => ({
+      style: {
+        display: "",
+      },
+    }),
+  };
   describe("initializeFilter", () => {
     beforeEach(() => {
       document.body.innerHTML = `<div class='map-filter'></div>`;
     });
     it("expands on click", () => {
-      initializeFilter({ locations });
+      getMarkers.mockImplementationOnce(() => [
+        { location: locations[0], marker },
+        { location: locations[1], marker },
+      ]);
+      initializeFilter({ locations, onSelect: vi.fn() });
       expect(getFilterContainer().classList).not.toContain("expanded");
       getFilterContainer().dispatchEvent(new Event("click"));
       expect(getFilterContainer().classList).toContain("expanded");
@@ -38,14 +49,13 @@ describe("filter", () => {
       initializeFilter({
         locations,
       });
-      console.log(document.body.innerHTML);
       const html = getFilterContainer().innerHTML;
       expect(html).toContain("Coffee Shops");
       expect(html).toContain("Java Hut");
       expect(html).toContain("Bars");
-      expect(document.querySelector(".filter-location").style.display).toBe(
-        "none",
-      );
+      expect(
+        document.querySelector(".filter-location-button").style.display,
+      ).toBe("none");
     });
   });
   describe("onFilterButtonClick", () => {
@@ -53,13 +63,6 @@ describe("filter", () => {
       document.body.innerHTML = `<div class='map-filter'></div>`;
     });
     it("hides the other filter buttons and shows locations", () => {
-      const marker = {
-        getElement: () => ({
-          style: {
-            display: "",
-          },
-        }),
-      };
       getMarkers.mockImplementationOnce(() => [
         { location: locations[0], marker },
         { location: locations[1], marker },
@@ -68,10 +71,10 @@ describe("filter", () => {
         locations,
       });
       const [firstFilterButton, ...otherFilterButtons] =
-        document.querySelectorAll(".filter-button");
+        document.querySelectorAll(".filter-type-button");
       const type = "coffee";
       const onSelect = vi.fn();
-      const onClick = onFilterButtonClick({
+      const onClick = onFilterTypeButtonClick({
         type,
         onSelect,
         button: firstFilterButton,
