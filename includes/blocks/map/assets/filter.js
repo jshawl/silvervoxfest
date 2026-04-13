@@ -7,12 +7,7 @@ export const collapseFilter = () => {
 };
 
 const hideAll = (container) => {
-  hide(container, ".filter-group");
-  hide(container, ".filter-item");
-};
-
-const hide = (container, selector) => {
-  container.querySelectorAll(selector).forEach((element) => {
+  container.querySelectorAll("[data-filter-id]").forEach((element) => {
     element.classList.add("hidden");
   });
 };
@@ -28,17 +23,18 @@ const getLeafMarkers = (nodes) =>
     node.children ? getLeafMarkers(node.children) : [node],
   );
 
-export const initializeFilter = ({ tree, onSelect }) => {
-  const filterContainer = getFilterContainer();
-  filterContainer.addEventListener("click", (e) => {
+const handleFilterContainerClick =
+  ({ filterContainer, onSelect, tree }) =>
+  () => {
+    hideAll(filterContainer);
     filterContainer.classList.add("expanded");
     show(filterContainer, ".filter-group");
-    hide(filterContainer, ".filter-item");
     onSelect(getLeafMarkers(tree));
-  });
+  };
 
-  const search = filterContainer.querySelector("input");
-  search.addEventListener("keyup", (e) => {
+const handleSearch =
+  ({ filterContainer, search, tree }) =>
+  () => {
     hideAll(filterContainer);
 
     if (search.value === "") {
@@ -46,39 +42,61 @@ export const initializeFilter = ({ tree, onSelect }) => {
       return;
     }
     const regexp = new RegExp(search.value, "ig");
-    tree.forEach(({ label, children }) => {
+    tree.forEach(({ label, children, id }) => {
       if (regexp.test(label)) {
-        show(filterContainer, `[data-filter-key="${label}"]`);
+        show(filterContainer, `[data-filter-id="${id}"]`);
       }
       children.forEach((child) => {
         if (regexp.test(JSON.stringify(child.location))) {
-          show(filterContainer, `[data-filter-key="${label}"]`);
-          show(filterContainer, `[data-filter-key="${child.label}"]`);
+          show(filterContainer, `[data-filter-id="${id}"]`);
+          show(filterContainer, `[data-filter-id="${child.id}"]`);
         }
       });
     });
-  });
+    // TODO no results
+  };
 
-  tree.forEach(({ label, children }) => {
+const handleGroupClick =
+  ({ children, filterContainer, id, onSelect }) =>
+  (e) => {
+    e.stopPropagation();
+    hideAll(filterContainer);
+    // show this one group
+    show(filterContainer, `[data-filter-id="${id}"]`);
+    children.forEach((child) =>
+      // show this group's children
+      show(filterContainer, `[data-filter-id="${child.id}"`),
+    );
+    onSelect(getLeafMarkers(children));
+  };
+
+export const initializeFilter = ({ tree, onSelect }) => {
+  const filterContainer = getFilterContainer();
+  const search = filterContainer.querySelector("input");
+
+  filterContainer.addEventListener(
+    "click",
+    handleFilterContainerClick({ filterContainer, onSelect, tree }),
+  );
+
+  search.addEventListener(
+    "keyup",
+    handleSearch({ filterContainer, search, tree }),
+  );
+
+  tree.forEach(({ label, children, id }) => {
     const group = document.createElement("div");
     group.classList.add("filter-group");
-    group.setAttribute("data-filter-key", label);
-    group.addEventListener("click", (e) => {
-      e.stopPropagation();
-      hideAll(filterContainer);
-      // show this one group
-      show(filterContainer, `[data-filter-key="${label}"]`);
-      children.forEach((child) =>
-        // show this group's children
-        show(filterContainer, `[data-filter-key="${child.label}"`),
-      );
-      onSelect(getLeafMarkers(children));
-    });
+    group.setAttribute("data-filter-id", id);
+    group.addEventListener(
+      "click",
+      handleGroupClick({ children, filterContainer, id, onSelect }),
+    );
     group.innerHTML = label;
     children.forEach((child) => {
       const leaf = document.createElement("div");
       leaf.classList.add("filter-item");
-      leaf.setAttribute(`data-filter-key`, child.label);
+      leaf.setAttribute(`data-filter-id`, child.id);
       leaf.innerHTML = child.label;
       leaf.addEventListener("click", (e) => {
         e.stopPropagation();

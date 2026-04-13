@@ -113,7 +113,7 @@ class SilverVoxFest_Place
 
     public function filter_rest_response($response, $post, $request)
     {
-        $allowed = ['title', 'address', 'url', 'image', 'type', 'lat', 'lng', 'content'];
+        $allowed = ['id','title', 'address', 'url', 'image', 'type', 'lat', 'lng', 'content'];
 
         $data = $response->get_data();
         $filtered = array_intersect_key($data, array_flip($allowed));

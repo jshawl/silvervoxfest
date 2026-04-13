@@ -14,31 +14,31 @@ vi.mock("@places/marker", async () => {
 describe("filter", () => {
   const coffeeShops = [
     {
+      id: 1,
       location: {
         title: "A Coffee Shop",
       },
-      label: "A Coffee Shop",
     },
     {
+      id: 2,
       location: {
         title: "Another Coffee Shop",
       },
-      label: "Another Coffee Shop",
     },
   ];
   const tree = [
     {
-      label: "☕️ Coffee Shops",
+      id: "coffee",
       children: coffeeShops,
     },
     {
-      label: "🍻 Bars",
+      id: "alcohol",
       children: [
         {
+          id: 3,
           location: {
-            title: "A Bar",
+            title: "A Saloon",
           },
-          label: "A Bar",
         },
       ],
     },
@@ -62,12 +62,11 @@ describe("filter", () => {
       container.dispatchEvent(new Event("click"));
       // visible group
       expect(
-        container.querySelector("[data-filter-key='☕️ Coffee Shops']")
-          .classList,
+        container.querySelector("[data-filter-id='coffee']").classList,
       ).not.toContain("hidden");
       // hidden item
       expect(
-        container.querySelector("[data-filter-key='A Coffee Shop']").classList,
+        container.querySelector("[data-filter-id='1']").classList,
       ).toContain("hidden");
     });
     it("shows items on group click and hides other groups", () => {
@@ -79,22 +78,25 @@ describe("filter", () => {
       const container = getFilterContainer();
       container.dispatchEvent(new Event("click"));
       container
-        .querySelector("[data-filter-key='☕️ Coffee Shops']")
+        .querySelector("[data-filter-id='coffee']")
         .dispatchEvent(new Event("click"));
       expect(onSelect).toHaveBeenCalledWith(coffeeShops);
+      //visible group
+
+      expect(
+        container.querySelector("[data-filter-id='coffee']").classList,
+      ).not.toContain("hidden");
       // visible item
       expect(
-        container.querySelector("[data-filter-key='A Coffee Shop']").classList,
+        container.querySelector("[data-filter-id='1']").classList,
       ).not.toContain("hidden");
       expect(
-        container.querySelector("[data-filter-key='Another Coffee Shop']")
-          .classList,
+        container.querySelector("[data-filter-id='2']").classList,
       ).not.toContain("hidden");
       // hidden sibling groups
-      const otherGroup = [
-        ...container.querySelectorAll("[data-filter-key]"),
-      ].find((el) => el.dataset.filterKey === "🍻 Bars");
-      expect(otherGroup.classList).toContain("hidden");
+      expect(
+        container.querySelector("[data-filter-id='alcohol']").classList,
+      ).toContain("hidden");
     });
     it("keeps showing the group on item click", () => {
       const onSelect = vi.fn();
@@ -105,15 +107,14 @@ describe("filter", () => {
       const container = getFilterContainer();
       container.dispatchEvent(new Event("click"));
       container
-        .querySelector("[data-filter-key='☕️ Coffee Shops']")
+        .querySelector("[data-filter-id='coffee']")
         .dispatchEvent(new Event("click"));
-      const item = container.querySelector("[data-filter-key='A Coffee Shop']");
+      const item = container.querySelector("[data-filter-id='1']");
       item.dispatchEvent(new Event("click"));
       expect(onSelect).toHaveBeenCalledWith([coffeeShops[0]]);
       // visible sibling item
       expect(
-        container.querySelector("[data-filter-key='Another Coffee Shop']")
-          .classList,
+        container.querySelector("[data-filter-id='2']").classList,
       ).not.toContain("hidden");
     });
     it("searches groups and items", () => {
@@ -124,10 +125,13 @@ describe("filter", () => {
       const container = getFilterContainer();
       container.dispatchEvent(new Event("click"));
       const input = container.querySelector("input");
-      input.value = "bar";
+      input.value = "saloon";
       input.dispatchEvent(new Event("keyup"));
       expect(
-        container.querySelector("[data-filter-key='A Bar']").classList,
+        container.querySelector("[data-filter-id='alcohol']").classList,
+      ).not.toContain("hidden");
+      expect(
+        container.querySelector("[data-filter-id='3']").classList,
       ).not.toContain("hidden");
     });
     it("only shows groups when the search is cleared", () => {
