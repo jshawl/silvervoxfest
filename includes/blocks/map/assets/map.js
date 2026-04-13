@@ -5,7 +5,6 @@ let map;
 const fitBoundsOptions = { padding: 200 };
 
 export const initializeMap = ({ onMapLoad }) => {
-  // TODO why is map.js rendered in place edit?
   map = new mapboxgl.Map({
     container: "map",
     center: [-77.41054, 39.41427],

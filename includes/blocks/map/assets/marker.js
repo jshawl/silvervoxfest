@@ -34,6 +34,7 @@ export const createMarker = (location) => {
   const marker = new mapboxgl.Marker(options)
     .setLngLat([location.lng, location.lat])
     .setPopup(
+      // TODO h3 line height
       new mapboxgl.Popup({ focusAfterOpen: false }).setHTML(
         `<h3>${location.title.rendered}</h3>
                ${location.content.rendered ?? ""}

@@ -14,6 +14,7 @@ const buildTree = ({ locations, markers }) =>
       .filter(({ location }) => location.type === type)
       .map(({ marker, location }) => ({
         id: location.id,
+        // TODO item labels should be sorted alphabetically
         label: location.title.rendered,
         marker,
         location,
