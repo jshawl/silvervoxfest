@@ -1,8 +1,5 @@
 export const getFilterContainer = () => document.querySelector(".map-filter");
 
-export const getLocationTypes = (locations) =>
-  [...new Set(locations.map((l) => l.type))].sort((a, b) => a.localeCompare(b));
-
 export const collapseFilter = () => {
   const container = getFilterContainer();
   container.classList.remove("expanded");

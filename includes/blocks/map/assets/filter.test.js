@@ -2,14 +2,7 @@
  * @vitest-environment jsdom
  */
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import {
-  collapseFilter,
-  getFilterContainer,
-  initializeFilter,
-  onFilterTypeButtonClick,
-} from "./filter";
-
-import { getMarkers } from "@places/marker";
+import { collapseFilter, getFilterContainer, initializeFilter } from "./filter";
 
 vi.mock("@places/marker", async () => {
   return {
@@ -19,80 +12,141 @@ vi.mock("@places/marker", async () => {
 });
 
 describe("filter", () => {
-  const locations = [
-    { type: "coffee", title: { rendered: "Java Hut" } },
-    { type: "alcohol", title: { rendered: "Turnt town" } },
-    { type: "coffee", title: { rendered: "Joe's Joe" } },
-  ];
-  const marker = {
-    getElement: () => ({
-      style: {
-        display: "",
+  const coffeeShops = [
+    {
+      location: {
+        title: "A Coffee Shop",
       },
-    }),
-  };
+      label: "A Coffee Shop",
+    },
+    {
+      location: {
+        title: "Another Coffee Shop",
+      },
+      label: "Another Coffee Shop",
+    },
+  ];
+  const tree = [
+    {
+      label: "☕️ Coffee Shops",
+      children: coffeeShops,
+    },
+    {
+      label: "🍻 Bars",
+      children: [
+        {
+          location: {
+            title: "A Bar",
+          },
+          label: "A Bar",
+        },
+      ],
+    },
+  ];
   describe("initializeFilter", () => {
     beforeEach(() => {
-      document.body.innerHTML = `<div class='map-filter'></div>`;
+      document.body.innerHTML = `<div class='map-filter'><input/></div>`;
     });
     it("expands on click", () => {
-      getMarkers.mockImplementationOnce(() => [
-        { location: locations[0], marker },
-        { location: locations[1], marker },
-      ]);
-      initializeFilter({ locations, onSelect: vi.fn() });
+      initializeFilter({ onSelect: vi.fn(), tree: [] });
       expect(getFilterContainer().classList).not.toContain("expanded");
       getFilterContainer().dispatchEvent(new Event("click"));
       expect(getFilterContainer().classList).toContain("expanded");
     });
-    it("adds location types and locations to the list", () => {
+    it("renders the whole tree but only groups are visible", () => {
       initializeFilter({
-        locations,
+        tree,
+        onSelect: vi.fn(),
       });
-      const html = getFilterContainer().innerHTML;
-      expect(html).toContain("Coffee Shops");
-      expect(html).toContain("Java Hut");
-      expect(html).toContain("Bars");
+      const container = getFilterContainer();
+      container.dispatchEvent(new Event("click"));
+      // visible group
       expect(
-        document.querySelector(".filter-location-button").style.display,
-      ).toBe("none");
+        container.querySelector("[data-filter-key='☕️ Coffee Shops']")
+          .classList,
+      ).not.toContain("hidden");
+      // hidden item
+      expect(
+        container.querySelector("[data-filter-key='A Coffee Shop']").classList,
+      ).toContain("hidden");
     });
-  });
-  describe("onFilterButtonClick", () => {
-    beforeEach(() => {
-      document.body.innerHTML = `<div class='map-filter'></div>`;
-    });
-    it("hides the other filter buttons and shows locations", () => {
-      getMarkers.mockImplementationOnce(() => [
-        { location: locations[0], marker },
-        { location: locations[1], marker },
-      ]);
-      initializeFilter({
-        locations,
-      });
-      const [firstFilterButton, ...otherFilterButtons] =
-        document.querySelectorAll(".filter-type-button");
-      const type = "coffee";
+    it("shows items on group click and hides other groups", () => {
       const onSelect = vi.fn();
-      const onClick = onFilterTypeButtonClick({
-        type,
+      initializeFilter({
+        tree,
         onSelect,
-        button: firstFilterButton,
       });
-      onClick(new Event("click"));
-      expect(firstFilterButton.parentElement.style.display).toBe("block");
-      expect(firstFilterButton.parentElement.childNodes[0].style.display).toBe(
-        "block",
-      );
-      otherFilterButtons.forEach((ofb) =>
-        expect(ofb.parentElement.style.display).toBe("none"),
-      );
-      expect(onSelect).toHaveBeenCalledOnce();
-      expect(onSelect).toHaveBeenCalledWith({
-        filteredLocations: [locations[0]],
+      const container = getFilterContainer();
+      container.dispatchEvent(new Event("click"));
+      container
+        .querySelector("[data-filter-key='☕️ Coffee Shops']")
+        .dispatchEvent(new Event("click"));
+      expect(onSelect).toHaveBeenCalledWith(coffeeShops);
+      // visible item
+      expect(
+        container.querySelector("[data-filter-key='A Coffee Shop']").classList,
+      ).not.toContain("hidden");
+      expect(
+        container.querySelector("[data-filter-key='Another Coffee Shop']")
+          .classList,
+      ).not.toContain("hidden");
+      // hidden sibling groups
+      const otherGroup = [
+        ...container.querySelectorAll("[data-filter-key]"),
+      ].find((el) => el.dataset.filterKey === "🍻 Bars");
+      expect(otherGroup.classList).toContain("hidden");
+    });
+    it("keeps showing the group on item click", () => {
+      const onSelect = vi.fn();
+      initializeFilter({
+        tree,
+        onSelect,
+      });
+      const container = getFilterContainer();
+      container.dispatchEvent(new Event("click"));
+      container
+        .querySelector("[data-filter-key='☕️ Coffee Shops']")
+        .dispatchEvent(new Event("click"));
+      const item = container.querySelector("[data-filter-key='A Coffee Shop']");
+      item.dispatchEvent(new Event("click"));
+      expect(onSelect).toHaveBeenCalledWith([coffeeShops[0]]);
+      // visible sibling item
+      expect(
+        container.querySelector("[data-filter-key='Another Coffee Shop']")
+          .classList,
+      ).not.toContain("hidden");
+    });
+    it("searches groups and items", () => {
+      initializeFilter({
+        tree,
+        onSelect: vi.fn(),
+      });
+      const container = getFilterContainer();
+      container.dispatchEvent(new Event("click"));
+      const input = container.querySelector("input");
+      input.value = "bar";
+      input.dispatchEvent(new Event("keyup"));
+      expect(
+        container.querySelector("[data-filter-key='A Bar']").classList,
+      ).not.toContain("hidden");
+    });
+    it("only shows groups when the search is cleared", () => {
+      initializeFilter({
+        tree,
+        onSelect: vi.fn(),
+      });
+      const container = getFilterContainer();
+      container.dispatchEvent(new Event("click"));
+      const input = container.querySelector("input");
+      input.value = "";
+      input.dispatchEvent(new Event("keyup"));
+      const items = container.querySelectorAll(".filter-item");
+      items.forEach((item) => {
+        expect(item.classList).toContain("hidden");
       });
     });
   });
+
   describe("collapseFilter", () => {
     it("removes the expanded class", () => {
       document.body.innerHTML = `<div class='map-filter expanded'></div>`;
