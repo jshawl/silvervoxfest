@@ -73,6 +73,12 @@ const handleGroupClick =
 export const initializeFilter = ({ tree, onSelect }) => {
   const filterContainer = getFilterContainer();
   const search = filterContainer.querySelector("input");
+  const close = filterContainer.querySelector(".close-filter");
+  close.addEventListener("click", (e) => {
+    e.stopPropagation();
+    collapseFilter();
+    onSelect(getLeafMarkers(tree));
+  });
 
   filterContainer.addEventListener(
     "click",

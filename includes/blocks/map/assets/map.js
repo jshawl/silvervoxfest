@@ -4,7 +4,7 @@ let map;
 
 const fitBoundsOptions = { padding: 200 };
 
-export const initializeMap = ({ onMapClick, onMapLoad }) => {
+export const initializeMap = ({ onMapLoad }) => {
   // TODO why is map.js rendered in place edit?
   map = new mapboxgl.Map({
     container: "map",
@@ -22,7 +22,6 @@ export const initializeMap = ({ onMapClick, onMapLoad }) => {
   });
 
   map.on("load", async () => onMapLoad(map));
-  map.on("click", () => onMapClick(map));
 };
 
 export const fitBounds = ({ map, locations }) => {

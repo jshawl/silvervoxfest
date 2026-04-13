@@ -1,6 +1,6 @@
 import { initializeMap, fitBounds } from "@places/map";
 import { createMarkers, closePopups, ICON_MAP } from "@places/marker";
-import { initializeFilter, collapseFilter } from "@places/filter";
+import { initializeFilter } from "@places/filter";
 
 export const getLocationTypes = (locations) =>
   [...new Set(locations.map((l) => l.type))].sort((a, b) => a.localeCompare(b));
@@ -49,13 +49,5 @@ initializeMap({
         }
       },
     });
-  },
-  onMapClick: (map) => {
-    collapseFilter();
-    closePopups();
-    markers.forEach(({ marker }) => {
-      marker.getElement().style.display = "block";
-    });
-    fitBounds({ map, locations });
   },
 });

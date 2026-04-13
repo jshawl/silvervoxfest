@@ -67,8 +67,21 @@
   border-radius: 5px;
 }
 
+.map-filter .close-filter {
+  display: none;
+}
+
+.map-filter .flex {
+  display: flex;
+}
+
 .map-filter.expanded {
   width: 300px;
+}
+
+.map-filter.expanded .close-filter {
+  display: block;
+  cursor: pointer;
 }
 
 .map-filter input {
