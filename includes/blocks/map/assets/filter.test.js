@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { collapseFilter, getFilterContainer, initializeFilter } from "./filter";
+import { initializeFilter } from "./filter";
 
 vi.mock("@places/marker", async () => {
   return {
@@ -10,6 +10,12 @@ vi.mock("@places/marker", async () => {
     getMarkers: vi.fn(),
   };
 });
+
+const click = (element) => element.dispatchEvent(new Event("click"));
+const type = (element, value) => {
+  element.value = value;
+  element.dispatchEvent(new Event("keyup"));
+};
 
 describe("filter", () => {
   const coffeeShops = [
@@ -45,21 +51,28 @@ describe("filter", () => {
   ];
   describe("initializeFilter", () => {
     beforeEach(() => {
-      document.body.innerHTML = `<div class='map-filter'><input/></div>`;
+      document.body.innerHTML = `<div class='map-filter'>
+        <input/>
+        <span class="close-filter"></span>
+      </div>`;
     });
     it("expands on click", () => {
+      const container = document.querySelector(".map-filter");
       initializeFilter({ onSelect: vi.fn(), tree: [] });
-      expect(getFilterContainer().classList).not.toContain("expanded");
-      getFilterContainer().dispatchEvent(new Event("click"));
-      expect(getFilterContainer().classList).toContain("expanded");
+      expect(container.classList).not.toContain("expanded");
+      click(container);
+      expect(container.classList).toContain("expanded");
+      // collapse
+      click(container.querySelector(".close-filter"));
+      expect(container.classList).not.toContain("expanded");
     });
     it("renders the whole tree but only groups are visible", () => {
       initializeFilter({
         tree,
         onSelect: vi.fn(),
       });
-      const container = getFilterContainer();
-      container.dispatchEvent(new Event("click"));
+      const container = document.querySelector(".map-filter");
+      click(container);
       // visible group
       expect(
         container.querySelector("[data-filter-id='coffee']").classList,
@@ -75,11 +88,9 @@ describe("filter", () => {
         tree,
         onSelect,
       });
-      const container = getFilterContainer();
-      container.dispatchEvent(new Event("click"));
-      container
-        .querySelector("[data-filter-id='coffee']")
-        .dispatchEvent(new Event("click"));
+      const container = document.querySelector(".map-filter");
+      click(container);
+      click(container.querySelector("[data-filter-id='coffee']"));
       expect(onSelect).toHaveBeenCalledWith(coffeeShops);
       //visible group
 
@@ -104,13 +115,10 @@ describe("filter", () => {
         tree,
         onSelect,
       });
-      const container = getFilterContainer();
+      const container = document.querySelector(".map-filter");
       container.dispatchEvent(new Event("click"));
-      container
-        .querySelector("[data-filter-id='coffee']")
-        .dispatchEvent(new Event("click"));
-      const item = container.querySelector("[data-filter-id='1']");
-      item.dispatchEvent(new Event("click"));
+      click(container.querySelector("[data-filter-id='coffee']"));
+      click(container.querySelector("[data-filter-id='1']"));
       expect(onSelect).toHaveBeenCalledWith([coffeeShops[0]]);
       // visible sibling item
       expect(
@@ -122,11 +130,9 @@ describe("filter", () => {
         tree,
         onSelect: vi.fn(),
       });
-      const container = getFilterContainer();
-      container.dispatchEvent(new Event("click"));
-      const input = container.querySelector("input");
-      input.value = "saloon";
-      input.dispatchEvent(new Event("keyup"));
+      const container = document.querySelector(".map-filter");
+      click(container);
+      type(container.querySelector("input"), "saloon");
       expect(
         container.querySelector("[data-filter-id='alcohol']").classList,
       ).not.toContain("hidden");
@@ -139,25 +145,13 @@ describe("filter", () => {
         tree,
         onSelect: vi.fn(),
       });
-      const container = getFilterContainer();
-      container.dispatchEvent(new Event("click"));
-      const input = container.querySelector("input");
-      input.value = "";
-      input.dispatchEvent(new Event("keyup"));
+      const container = document.querySelector(".map-filter");
+      click(container);
+      type(container.querySelector("input"), "");
       const items = container.querySelectorAll(".filter-item");
       items.forEach((item) => {
         expect(item.classList).toContain("hidden");
       });
-    });
-  });
-
-  describe("collapseFilter", () => {
-    it("removes the expanded class", () => {
-      document.body.innerHTML = `<div class='map-filter expanded'></div>`;
-      collapseFilter();
-      expect(document.querySelector(".map-filter").classList).not.toContain(
-        "expanded",
-      );
     });
   });
 });

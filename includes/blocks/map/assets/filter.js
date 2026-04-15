@@ -1,7 +1,4 @@
-export const getFilterContainer = () => document.querySelector(".map-filter");
-
-export const collapseFilter = () => {
-  const container = getFilterContainer();
+const collapseFilter = (container) => {
   container.classList.remove("expanded");
   hideAll(container);
 };
@@ -42,10 +39,7 @@ const handleSearch =
       return;
     }
     const regexp = new RegExp(search.value, "ig");
-    tree.forEach(({ label, children, id }) => {
-      if (regexp.test(label)) {
-        show(filterContainer, `[data-filter-id="${id}"]`);
-      }
+    tree.forEach(({ children, id }) => {
       children.forEach((child) => {
         if (regexp.test(JSON.stringify(child.location))) {
           show(filterContainer, `[data-filter-id="${id}"]`);
@@ -71,12 +65,12 @@ const handleGroupClick =
   };
 
 export const initializeFilter = ({ tree, onSelect }) => {
-  const filterContainer = getFilterContainer();
+  const filterContainer = document.querySelector(".map-filter");
   const search = filterContainer.querySelector("input");
   const close = filterContainer.querySelector(".close-filter");
   close.addEventListener("click", (e) => {
     e.stopPropagation();
-    collapseFilter();
+    collapseFilter(filterContainer);
     onSelect(getLeafMarkers(tree));
   });
 
