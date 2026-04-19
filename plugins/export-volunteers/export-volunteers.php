@@ -184,4 +184,6 @@ class SFMF_Export
     }
 }
 
-new SFMF_Export();
+add_action("plugins_loaded", function () {
+    new SFMF_Export();
+});
