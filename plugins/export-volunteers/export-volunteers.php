@@ -49,7 +49,7 @@ class SFMF_Export
         $url = admin_url('admin-ajax.php?action=export_volunteers');
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+            <h1><?php echo esc_html(get_admin_page_title() ?? ""); ?></h1>
             <p class="notice">There are <?php echo $total_count; ?> total volunteers!
             <small><em>last submission <?php echo $time_ago; ?> ago</em></small></p>
             <a class="button button-primary" href="<?php echo esc_url($url); ?>">Download CSV</a>
@@ -67,9 +67,9 @@ class SFMF_Export
         $filename = "volunteer-export-" . date('Y-m-d') . ".csv";
         header("Content-Disposition: attachment; filename=\"".  $filename ."\"");
         $out = fopen('php://output', 'w');
-        fputcsv($out, $headers);
+        fputcsv($out, $headers, ',', '"', '\\');
         foreach ($rows as $row) {
-            fputcsv($out, $row);
+            fputcsv($out, $row, ',', '"', '\\');
         }
         fclose($out);
         wp_die();
