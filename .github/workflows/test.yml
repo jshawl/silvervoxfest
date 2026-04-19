@@ -38,6 +38,9 @@ jobs:
           version: 1.0
       - name: Setup tests
         run: bash bin/ci.sh wordpress_tests root root 127.0.0.1 latest true
-      - name: Run tests
+      - name: Run tests (export-volunteers)
         run: phpunit
         working-directory: ./plugins/export-volunteers
+      - name: Run tests (places)
+        run: phpunit
+        working-directory: ./plugins/places

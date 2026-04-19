@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<phpunit
+	bootstrap="tests/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertWarningsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertDeprecationsToExceptions="true"
+	>
+	<testsuites>
+		<testsuite name="testing">
+			<directory>./tests</directory>
+		</testsuite>
+	</testsuites>
+
+	<coverage>
+        <include>
+            <directory suffix=".php">./includes/</directory>
+        </include>
+        <exclude>
+            <!-- Exclude test files -->
+            <directory>./tests/</directory>
+            <!-- Exclude vendor -->
+            <directory>./vendor/</directory>
+        </exclude>
+    </coverage>
+</phpunit>

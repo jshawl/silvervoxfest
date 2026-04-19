@@ -1,6 +1,6 @@
 <?php
 
-class SilverVoxFest_Place
+class SFMF_Place
 {
     public function __construct()
     {
@@ -221,5 +221,3 @@ class SilverVoxFest_Place
         register_post_type('place', $args);
     }
 }
-
-new SilverVoxFest_Place();

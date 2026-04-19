@@ -2,19 +2,21 @@
 
 class AdminTest extends WP_UnitTestCase
 {
-    public function test_menu()
+    public function setUp(): void
     {
-        $export = new SFMF_Export();
+        parent::setUp();
         wp_set_current_user(
             WP_UnitTestCase_Base::factory()->user->create(["role" => "administrator"])
         );
+    }
 
-        $this->assertNotFalse(
-            has_action(
-                "admin_menu",
-                [$export, "add_settings_page"],
-            ),
-        );
+    public function test_menu()
+    {
+        do_action('admin_menu');
+        global $submenu;
+        $this->assertArrayHasKey('tools.php', $submenu);
+        $slugs = array_column($submenu['tools.php'], 2);
+        $this->assertContains('gf-export', $slugs);
     }
 }
 ?>
