@@ -31,12 +31,22 @@ if (! class_exists('GFAPI')) {
 
         public static function get_entries($form_ids, $search_criteria = array(), $sorting = null, $paging = null, &$total_count = null)
         {
-            $entries = [
-                [ 'id' => 1, 'form_id' => $form_ids, 'date_created' => '2024-01-01 10:00:00', 'status' => 'active', '1' => 'Jane',  '2' => 'jane@example.com',  '3' => 'Hello world', '4' => 'a:1:{i:0;a:6:{s:22:"Week of June 14th 2026";s:21:"Evenings and weekends";s:23:"Thursday June 18th 2026";s:0:"";s:21:"Friday June 19th 2026";s:0:"";s:23:"Saturday June 20th 2026";s:0:"";s:21:"Sunday June 21st 2026";s:0:"";s:21:"Monday June 22nd 2026";s:0:"";}}' ],
-                [ 'id' => 2, 'form_id' => $form_ids, 'date_created' => '2024-01-02 11:00:00', 'status' => 'active', '1' => 'John',  '2' => 'john@example.com',  '3' => 'Test message', '4' => 'a:1:{i:0;a:6:{s:22:"Week of June 14th 2026";s:21:"Evenings and weekends";s:23:"Thursday June 18th 2026";s:0:"";s:21:"Friday June 19th 2026";s:0:"";s:23:"Saturday June 20th 2026";s:0:"";s:21:"Sunday June 21st 2026";s:0:"";s:21:"Monday June 22nd 2026";s:0:"";}}' ],
-                [ 'id' => 3, 'form_id' => $form_ids, 'date_created' => '2024-01-03 12:00:00', 'status' => 'active', '1' => 'Alice', '2' => 'alice@example.com', '3' => 'Another one' , '4' => 'a:1:{i:0;a:6:{s:22:"Week of June 14th 2026";s:21:"Evenings and weekends";s:23:"Thursday June 18th 2026";s:0:"";s:21:"Friday June 19th 2026";s:0:"";s:23:"Saturday June 20th 2026";s:0:"";s:21:"Sunday June 21st 2026";s:0:"";s:21:"Monday June 22nd 2026";s:0:"";}}']
+            $availability = 'a:1:{i:0;a:6:{s:22:"Week of June 14th 2026";s:21:"Evenings and weekends";s:23:"Thursday June 18th 2026";s:0:"";s:21:"Friday June 19th 2026";s:0:"";s:23:"Saturday June 20th 2026";s:0:"";s:21:"Sunday June 21st 2026";s:0:"";s:21:"Monday June 22nd 2026";s:0:"";}}';
+            $common = [
+                'form_id'      => $form_ids,
+                'date_created' => '2024-01-01 10:00:00',
+                'status'       => 'active',
+                '1'            => 'Jane',
+                '2'            => 'jane@example.com',
+                '3'            => 'Hello world',
+                '4'            => $availability,
+                '5'            => 'Yes'
             ];
-
+            $entries = [
+                ['id' => 1] + $common,
+                ['id' => 2] + $common,
+                ['id' => 3] + $common
+            ];
             $total_count = count($entries);
             return $entries;
         }
@@ -48,6 +58,10 @@ if (! class_exists('GFAPI')) {
                 (object) [ 'id' => 2, 'label' => 'Email', 'type' => 'unknown' ],
                 (object) [ 'id' => 3, 'label' => 'Message', 'type' => 'unknown' ],
                 (object) [ 'id' => 4, 'label' => 'Availability', 'type' => 'list' ],
+                (object) [ 'id' => 5, 'label' => 'Yes or No', 'type' => 'radio', 'choices' => [
+                    ['text' => 'Yes', 'value' => 'Yes'],
+                    ['text' => 'No', 'value' => 'No']
+                ]]
             ];
         }
     }
