@@ -49,7 +49,7 @@ class SFMF_Export
         $url = admin_url('admin-ajax.php?action=export_volunteers');
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html(get_admin_page_title() ?? ""); ?></h1>
+            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
             <p class="notice">There are <?php echo $total_count; ?> total volunteers!
             <small><em>last submission <?php echo $time_ago; ?> ago</em></small></p>
             <a class="button button-primary" href="<?php echo esc_url($url); ?>">Download CSV</a>

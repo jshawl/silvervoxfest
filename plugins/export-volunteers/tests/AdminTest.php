@@ -24,6 +24,7 @@ class AdminTest extends WP_UnitTestCase
     public function test_admin_page()
     {
         ob_start();
+        set_current_screen('gf-export');
         $this->plugin->settings_page_html();
         $output = ob_get_clean();
         $this->assertStringContainsString('Download CSV', $output);
