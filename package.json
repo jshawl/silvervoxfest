@@ -6,7 +6,7 @@
   "scripts": {
     "start": "wp-env start",
     "stop": "wp-env stop",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./bin/test.sh"
   },
   "repository": {
     "type": "git",
