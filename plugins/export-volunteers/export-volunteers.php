@@ -67,9 +67,9 @@ class SFMF_Export
         $filename = "volunteer-export-" . date('Y-m-d') . ".csv";
         header("Content-Disposition: attachment; filename=\"".  $filename ."\"");
         $out = fopen('php://output', 'w');
-        fputcsv($out, $headers);
+        fputcsv($out, $headers, ',', '"', '\\');
         foreach ($rows as $row) {
-            fputcsv($out, $row);
+            fputcsv($out, $row, ',', '"', '\\');
         }
         fclose($out);
         wp_die();
