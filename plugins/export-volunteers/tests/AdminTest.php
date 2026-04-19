@@ -23,10 +23,15 @@ class AdminTest extends WP_UnitTestCase
 
     public function test_admin_page()
     {
+        do_action('admin_menu');
+        set_current_screen('tools_page_gf-export');
+        global $pagenow, $plugin_page;
+        $pagenow = 'tools.php';
+        $plugin_page = 'gf-export';
         ob_start();
-        set_current_screen('gf-export');
         $this->plugin->settings_page_html();
         $output = ob_get_clean();
+        $this->assertStringContainsString('Export Volunteers', $output);
         $this->assertStringContainsString('Download CSV', $output);
     }
 
