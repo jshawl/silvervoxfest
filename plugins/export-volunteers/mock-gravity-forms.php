@@ -44,9 +44,9 @@ if (! class_exists('GFAPI')) {
         private static function mock_fields()
         {
             return [
-                (object) [ 'id' => 1, 'label' => 'Name' ],
-                (object) [ 'id' => 2, 'label' => 'Email' ],
-                (object) [ 'id' => 3, 'label' => 'Message' ],
+                (object) [ 'id' => 1, 'label' => 'Name', 'type' => 'unknown' ],
+                (object) [ 'id' => 2, 'label' => 'Email', 'type' => 'unknown' ],
+                (object) [ 'id' => 3, 'label' => 'Message', 'type' => 'unknown' ],
                 (object) [ 'id' => 4, 'label' => 'Availability', 'type' => 'list' ],
             ];
         }
