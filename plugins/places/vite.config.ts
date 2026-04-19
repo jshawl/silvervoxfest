@@ -7,4 +7,9 @@ export default defineConfig({
       "@places": path.resolve(__dirname, "./includes/blocks/map/assets"),
     },
   },
+  test: {
+    coverage: {
+      reportsDirectory: "coverage/js",
+    },
+  },
 });
