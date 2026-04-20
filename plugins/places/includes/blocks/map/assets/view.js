@@ -27,6 +27,7 @@ const onMapLoad = async (map) => {
   const markers = createMarkers({ locations });
   markers.forEach(({ marker }) => marker.addTo(map));
   fitBounds({ map, locations });
+  // TODO set state from url
   const tree = buildTree({ locations, markers });
   initializeFilter({
     tree,
@@ -48,6 +49,7 @@ const onMapLoad = async (map) => {
 
       const locations = places.map(({ location }) => location);
       fitBounds({ map, locations });
+      // TODO update url hashstate
     },
   });
 };
