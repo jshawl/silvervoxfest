@@ -11,5 +11,8 @@ describe("marker", () => {
         "☕️",
       );
     });
+    it("returns undefined if either type or emoji are missing", () => {
+      expect(createElement({})).toBeUndefined();
+    });
   });
 });

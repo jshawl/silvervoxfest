@@ -9,7 +9,7 @@ const buildTree = ({ locations, markers }) =>
   getLocationTypes(locations).map((type) => ({
     id: type,
     // TODO this is not alphabetically sorted because the emoji is in the label
-    label: `${ICON_MAP[type].emoji} ${ICON_MAP[type].label}`,
+    label: `${ICON_MAP[type]?.emoji} ${ICON_MAP[type]?.label}`,
     children: markers
       .filter(({ location }) => location.type === type)
       .map(({ marker, location }) => ({
