@@ -1,4 +1,7 @@
 export const createElement = ({ type, emoji }) => {
+  if (!type || !emoji) {
+    return undefined;
+  }
   const element = document.createElement("div");
   element.classList.add(`svf-marker-${type}`);
   element.innerHTML = emoji;
@@ -16,18 +19,18 @@ export const createMarkers = ({ locations }) => {
 };
 
 export const ICON_MAP = {
-  coffee: { emoji: "☕️", label: "Coffee Shops" },
-  alcohol: { emoji: "🍻", label: "Bars" },
-  food: { emoji: "🍽️", label: "Restaurants" },
-  hotel: { emoji: "🏨", label: "Hotels" },
-  venue: { emoji: "🎭", label: "Venues" },
+  Coffee: { emoji: "☕️", label: "Coffee Shops" },
+  Bar: { emoji: "🍻", label: "Bars" },
+  Restaurant: { emoji: "🍽️", label: "Restaurants" },
+  Hotel: { emoji: "🏨", label: "Hotels" },
+  Venue: { emoji: "🎭", label: "Venues" },
 };
 
 export const createMarker = (location) => {
   const options = {
     element: createElement({
       type: location.type,
-      emoji: ICON_MAP[location.type].emoji,
+      emoji: ICON_MAP[location.type]?.emoji,
     }),
   };
 
