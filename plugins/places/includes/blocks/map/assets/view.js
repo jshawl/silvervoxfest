@@ -2,24 +2,28 @@ import { initializeMap, fitBounds } from "@places/map";
 import { createMarkers, closePopups, ICON_MAP } from "@places/marker";
 import { initializeFilter } from "@places/filter";
 
-export const getLocationTypes = (locations) =>
-  [...new Set(locations.map((l) => l.type))].sort((a, b) => a.localeCompare(b));
+export const getLocationTypes = (locations) => [
+  ...new Set(locations.map((l) => l.type)),
+];
 
-const buildTree = ({ locations, markers }) =>
-  getLocationTypes(locations).map((type) => ({
-    id: type,
-    // TODO this is not alphabetically sorted because the emoji is in the label
-    label: `${ICON_MAP[type.toLowerCase()]?.emoji} ${ICON_MAP[type.toLowerCase()]?.label}`,
-    children: markers
-      .filter(({ location }) => location.type === type)
-      .map(({ marker, location }) => ({
-        id: location.id,
-        // TODO item labels should be sorted alphabetically
-        label: location.title.rendered,
-        marker,
-        location,
-      })),
-  }));
+const getLabelForType = (type) => ICON_MAP[type.toLowerCase()]?.label;
+
+export const buildTree = ({ locations, markers }) =>
+  getLocationTypes(locations)
+    .map((type) => ({
+      id: type,
+      label: `${ICON_MAP[type.toLowerCase()]?.emoji} ${getLabelForType(type)}`,
+      children: markers
+        .filter(({ location }) => location.type === type)
+        .map(({ marker, location }) => ({
+          id: location.id,
+          label: location.title.rendered,
+          marker,
+          location,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    }))
+    .sort((a, b) => getLabelForType(a.id).localeCompare(getLabelForType(b.id)));
 
 const onMapLoad = async (map) => {
   const response = await fetch("/wp-json/wp/v2/place?per_page=100");
@@ -54,6 +58,9 @@ const onMapLoad = async (map) => {
   });
 };
 
-initializeMap({
-  onMapLoad,
-});
+if (!("process" in globalThis)) {
+  console.log("no process");
+  initializeMap({
+    onMapLoad,
+  });
+}

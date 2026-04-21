@@ -1,3 +1,4 @@
+globalThis.mapboxgl ??= {};
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYW1ibGVhcHAiLCJhIjoiY21ucTViOTQyMDQyNzJxb2J6ODB4bWFwdiJ9.mfpPxQJXotqvIpUxXSZXjw";
 let map;
