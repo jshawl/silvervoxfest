@@ -59,7 +59,6 @@ const onMapLoad = async (map) => {
 };
 
 if (!("process" in globalThis)) {
-  console.log("no process");
   initializeMap({
     onMapLoad,
   });
