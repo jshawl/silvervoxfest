@@ -54,11 +54,11 @@ if (! class_exists('GFAPI')) {
         private static function mock_fields()
         {
             return [
-                (object) [ 'id' => 1, 'label' => 'Name', 'type' => 'unknown' ],
-                (object) [ 'id' => 2, 'label' => 'Email', 'type' => 'unknown' ],
-                (object) [ 'id' => 3, 'label' => 'Message', 'type' => 'unknown' ],
-                (object) [ 'id' => 4, 'label' => 'Availability', 'type' => 'list' ],
-                (object) [ 'id' => 5, 'label' => 'Yes or No', 'type' => 'radio', 'choices' => [
+                (object) [ 'id' => 1, 'label' => 'Name', 'visibility' => 'visible', 'type' => 'unknown' ],
+                (object) [ 'id' => 2, 'label' => 'Email', 'visibility' => 'visible', 'type' => 'unknown' ],
+                (object) [ 'id' => 3, 'label' => 'Message', 'visibility' => 'visible', 'type' => 'unknown' ],
+                (object) [ 'id' => 4, 'label' => 'Availability', 'visibility' => 'visible', 'type' => 'list' ],
+                (object) [ 'id' => 5, 'label' => 'Yes or No', 'visibility' => 'visible', 'type' => 'radio', 'choices' => [
                     ['text' => 'Yes', 'value' => 'Yes'],
                     ['text' => 'No', 'value' => 'No']
                 ]]

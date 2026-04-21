@@ -33,7 +33,9 @@ class SFMF_Export
 
     public function get_entries()
     {
-        $search_criteria = array();
+        $search_criteria = [
+            "status" => "active"
+        ];
         $sorting = null;
         $paging = array( 'offset' => 0, 'page_size' => 1000 );
         $total_count = 0;
@@ -54,6 +56,13 @@ class SFMF_Export
             <small><em>last submission <?php echo $time_ago; ?> ago</em></small></p>
             <a class="button button-primary" href="<?php echo esc_url($url); ?>">Download CSV</a>
         </div><?php
+        if (isset($_REQUEST["debug"])) { ?><pre><?php
+            $form = GFAPI::get_form(self::FORM_ID);
+            echo "DEBUG: fields\n";
+            var_dump($form['fields']);
+            echo "DEBUG: entries[0]\n";
+            var_dump($entries[0]);
+        }?></pre><?php
     }
 
     public function export_volunteers_handler()
@@ -83,101 +92,29 @@ class SFMF_Export
 
         foreach ($entries as $entry) {
             $row = [];
-
             foreach ($form['fields'] as $field) {
-
+                if ($field->visibility === 'administrative') {
+                    continue;
+                }
+                if (in_array($field->type, ['html', 'section', 'page'])) {
+                    continue;
+                }
                 $field_id = (string) $field->id;
                 $value = rgar($entry, $field_id);
-
-                // RADIO / SELECT / MULTI
-                if (in_array($field->type, ['radio', 'select', 'multi_choice'])) {
-                    $selected_value = $value;
-                    $label = $selected_value; // fallback
-
-                    if (!empty($field->choices)) {
-                        foreach ($field->choices as $choice) {
-
-                            $choice_value = $choice['value'] ?? '';
-                            $choice_text = $choice['text'] ?? '';
-
-                            // Case 1: normal GF setup (value matches stored value)
-                            if ($choice_value !== '' && $choice_value == $selected_value) {
-                                $label = $choice_text;
-                                break;
-                            }
-                        }
-                    }
-                    $row[$field->label] = $label;
-                }
-
-                // CHECKBOX (multiple inputs)
-                elseif ($field->type === 'checkbox' && !empty($field->inputs)) {
-                    $checked = [];
-
+                if (!empty($field->inputs)) {
+                    $values = [];
                     foreach ($field->inputs as $input) {
-                        $val = rgar($entry, (string) $input['id']);
-                        if ($val !== '') {
-                            $checked[] = $val;
+                        $input_value = rgar($entry, (string) $input['id']);
+                        if ($input_value !== '') {
+                            $values[] = $input_value;
                         }
                     }
-
-                    $row[$field->label] = implode(', ', $checked);
+                    $value = implode(', ', $values);
+                } else {
+                    $value = rgar($entry, $field_id);
                 }
-
-                // COMPOSITE (name, address, etc.)
-                elseif (!empty($field->inputs)) {
-                    foreach ($field->inputs as $input) {
-                        $row[$field->label . ' ' . $input['label']] =
-                            rgar($entry, (string) $input['id']);
-                    }
-                }
-
-                // LIST FIELD (serialized array of rows)
-                elseif ($field->type === 'list' && !empty($value)) {
-                    $list = maybe_unserialize($value);
-
-                    foreach ($list as $i => $list_row) {
-                        foreach ($list_row as $col => $val) {
-                            $key = $field->label . " " . ($i + 1) . " - " . $col;
-                            $row[$key] = $val;
-                        }
-                    }
-                }
-
-                // REPEATER FIELD (Gravity Forms 2.7+)
-                elseif ($field->type === 'repeater' && !empty($value)) {
-                    $repeater = maybe_unserialize($value);
-
-                    if (is_array($repeater)) {
-                        foreach ($repeater as $index => $repeater_row) {
-                            foreach ($field->fields as $sub_field) {
-                                $sub_id = (string) $sub_field->id;
-
-                                if (isset($repeater_row[$sub_id])) {
-                                    $key = $field->label . " {$index} - " . $sub_field->label;
-                                    $row[$key] = $repeater_row[$sub_id];
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // FALLBACK (text, textarea, number, email, etc.)
-                else {
-                    if (is_serialized($value)) {
-                        $unserialized = maybe_unserialize($value);
-
-                        if (is_array($unserialized)) {
-                            $row[$field->label] = implode(', ', $unserialized);
-                        } else {
-                            $row[$field->label] = $unserialized;
-                        }
-                    } else {
-                        $row[$field->label] = $value;
-                    }
-                }
+                $row[$field->label] = $value;
             }
-
             $rows[] = $row;
         }
         return $rows;
