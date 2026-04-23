@@ -24,6 +24,7 @@ export const ICON_MAP = {
   restaurant: { emoji: "🍽️", label: "Restaurants" },
   hotel: { emoji: "🏨", label: "Hotels" },
   venue: { emoji: "🎭", label: "Venues" },
+  shopping: { emoji: "🛍️", label: "Shopping" },
 };
 
 export const createMarker = (location) => {
@@ -38,7 +39,7 @@ export const createMarker = (location) => {
     .setLngLat([location.lng, location.lat])
     .setPopup(
       // TODO h3 line height
-      new mapboxgl.Popup({ focusAfterOpen: false }).setHTML(
+      new mapboxgl.Popup({ focusAfterOpen: false, offset: 25 }).setHTML(
         `<h3>${location.title.rendered}</h3>
                ${location.content.rendered ?? ""}
                <p>
