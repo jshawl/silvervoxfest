@@ -44,7 +44,21 @@ class AdminTest extends WP_UnitTestCase
             // expected — wp_die() at end of handler
         }
         $output = ob_get_clean();
-        $this->assertStringContainsString('Name,Email', $output);
+        $this->assertStringContainsString('"First Name","Last Name",Email', $output);
+        $this->assertStringContainsString('Jane,Doe', $output);
+    }
+
+    public function test_ignore_fields()
+    {
+        ob_start();
+        try {
+            $this->plugin->export_volunteers_handler();
+        } catch (WPDieException $e) {
+            // expected — wp_die() at end of handler
+        }
+        $output = ob_get_clean();
+        $this->assertStringNotContainsString('AdminField', $output);
+        $this->assertStringNotContainsString('SectionField', $output);
     }
 }
 ?>
