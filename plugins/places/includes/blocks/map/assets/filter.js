@@ -21,12 +21,11 @@ const getLeafMarkers = (nodes) =>
   );
 
 const handleFilterContainerClick =
-  ({ filterContainer, onSelect, tree }) =>
+  ({ filterContainer }) =>
   () => {
     hideAll(filterContainer);
     filterContainer.classList.add("expanded");
     show(filterContainer, ".filter-group");
-    onSelect(getLeafMarkers(tree));
   };
 
 const handleSearch =
@@ -76,7 +75,7 @@ export const initializeFilter = ({ tree, onSelect }) => {
 
   filterContainer.addEventListener(
     "click",
-    handleFilterContainerClick({ filterContainer, onSelect, tree }),
+    handleFilterContainerClick({ filterContainer }),
   );
 
   search.addEventListener(
