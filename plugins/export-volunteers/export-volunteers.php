@@ -100,8 +100,17 @@ class SFMF_Export
                     continue;
                 }
                 $field_id = (string) $field->id;
-                $value = rgar($entry, $field_id);
-                if (!empty($field->inputs)) {
+
+                if ($field->type === 'name') {
+
+                    $first = rgar($entry, $field->id . '.3');
+                    $last = rgar($entry, $field->id . '.6');
+
+                    $row['First Name'] = $first;
+                    $row['Last Name'] = $last;
+
+                    continue;
+                } elseif ($field->inputType === 'checkbox' && !empty($field->inputs)) {
                     $values = [];
                     foreach ($field->inputs as $input) {
                         $input_value = rgar($entry, (string) $input['id']);
@@ -110,9 +119,11 @@ class SFMF_Export
                         }
                     }
                     $value = implode(', ', $values);
+
                 } else {
                     $value = rgar($entry, $field_id);
                 }
+
                 $row[$field->label] = $value;
             }
             $rows[] = $row;

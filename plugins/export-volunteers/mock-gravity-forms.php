@@ -31,16 +31,19 @@ if (! class_exists('GFAPI')) {
 
         public static function get_entries($form_ids, $search_criteria = array(), $sorting = null, $paging = null, &$total_count = null)
         {
-            $availability = 'a:1:{i:0;a:6:{s:22:"Week of June 14th 2026";s:21:"Evenings and weekends";s:23:"Thursday June 18th 2026";s:0:"";s:21:"Friday June 19th 2026";s:0:"";s:23:"Saturday June 20th 2026";s:0:"";s:21:"Sunday June 21st 2026";s:0:"";s:21:"Monday June 22nd 2026";s:0:"";}}';
             $common = [
                 'form_id'      => $form_ids,
                 'date_created' => '2024-01-01 10:00:00',
                 'status'       => 'active',
                 '1'            => 'Jane',
+                '1.3'          => 'Jane',
+                '1.6'          => 'Doe',
                 '2'            => 'jane@example.com',
                 '3'            => 'Hello world',
-                '4'            => $availability,
-                '5'            => 'Yes'
+                '4'            => 'Yes',
+                '6'            => 'Morning',
+                '7'            => 'Afternoon',
+                '8'            => ''
             ];
             $entries = [
                 ['id' => 1] + $common,
@@ -53,15 +56,27 @@ if (! class_exists('GFAPI')) {
 
         private static function mock_fields()
         {
+            $defaults = [
+                'inputType'  => 'unknown',
+                'visibility' => 'visible',
+                'type'       => 'unknown'
+            ];
             return [
-                (object) [ 'id' => 1, 'label' => 'Name', 'visibility' => 'visible', 'type' => 'unknown' ],
-                (object) [ 'id' => 2, 'label' => 'Email', 'visibility' => 'visible', 'type' => 'unknown' ],
-                (object) [ 'id' => 3, 'label' => 'Message', 'visibility' => 'visible', 'type' => 'unknown' ],
-                (object) [ 'id' => 4, 'label' => 'Availability', 'visibility' => 'visible', 'type' => 'list' ],
-                (object) [ 'id' => 5, 'label' => 'Yes or No', 'visibility' => 'visible', 'type' => 'radio', 'choices' => [
+                (object) array_merge($defaults, [ 'id' => 1, 'label' => 'Name', 'type' => 'name']),
+                (object) array_merge($defaults, [ 'id' => 2, 'label' => 'Email']),
+                (object) array_merge($defaults, [ 'id' => 3, 'label' => 'Message']),
+                (object) array_merge($defaults, [ 'id' => 4, 'label' => 'Yes or No radio', 'type' => 'radio', 'choices' => [
                     ['text' => 'Yes', 'value' => 'Yes'],
                     ['text' => 'No', 'value' => 'No']
-                ]]
+                ]]),
+                (object) array_merge($defaults, [ 'id' => 6, 'label' => 'AdminField', 'type' => 'radio', 'visibility' => 'administrative']),
+                (object) array_merge($defaults, [ 'id' => 7, 'label' => 'SectionField', 'type' => 'section']),
+                (object) array_merge($defaults, [ 'id' => 8, 'label' => 'MAE Checkbox', 'inputType' => 'checkbox' ,'inputs' => [
+                    ['id' => 6, 'text' => 'Morning', 'value' => 'Morning'],
+                    ['id' => 7, 'text' => 'Afternoon', 'value' => 'Afternoon'],
+                    ['id' => 8, 'text' => 'Evening', 'value' => '']
+                ]])
+
             ];
         }
     }
