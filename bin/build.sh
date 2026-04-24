@@ -11,9 +11,6 @@ for plugin in plugins/*; do
 
     echo "Building $base $new_ver"
     perl -pi -e "s/Version: $old_ver/Version: $new_ver/" "$file"
-    echo "Zipping..."
     (cd plugins && zip -r "../build/$base.zip" "$base/includes/" "$base/$base.php" > /dev/null) || true
-    echo "Restoring..."
     perl -pi -e "s/Version: \Q$new_ver\E/Version: $old_ver/" "$file"
-    echo "Done"
 done
