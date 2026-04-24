@@ -4,6 +4,7 @@ const collapseFilter = (container) => {
 };
 
 const hideAll = (container) => {
+  container.querySelector(".no-results").classList.add("hidden");
   container.querySelectorAll("[data-filter-id]").forEach((element) => {
     element.classList.add("hidden");
   });
@@ -38,15 +39,19 @@ const handleSearch =
       return;
     }
     const regexp = new RegExp(search.value, "ig");
+    let results = false;
     tree.forEach(({ children, id }) => {
       children.forEach((child) => {
         if (regexp.test(JSON.stringify(child.location))) {
+          results = true;
           show(filterContainer, `[data-filter-id="${id}"]`);
           show(filterContainer, `[data-filter-id="${child.id}"]`);
         }
       });
     });
-    // TODO no results
+    if (!results) {
+      show(filterContainer, ".no-results");
+    }
   };
 
 const handleGroupClick =
