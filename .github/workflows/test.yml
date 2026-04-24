@@ -21,6 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          ls build/
           gh release delete latest --yes --cleanup-tag 2>/dev/null || true
           gh release create latest build/*.zip \
             --title "Latest build" \
