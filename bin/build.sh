@@ -3,6 +3,8 @@ set -euo pipefail
 
 rm -rf build/*
 for plugin in plugins/*; do
+    ls
+    pwd
     base=$(basename "$plugin")
     file="$plugin/$base.php"
     sha=$(git log --format="%h" -n 1 -- "$plugin")
