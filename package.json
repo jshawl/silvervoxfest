@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "./bin/build.sh",
     "start": "wp-env start",
     "stop": "wp-env stop",
     "test": "./bin/test.sh"

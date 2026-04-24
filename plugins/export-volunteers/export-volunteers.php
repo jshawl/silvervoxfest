@@ -3,13 +3,15 @@
 /**
  * Plugin Name: Export Volunteers
  * Description: Allows editors to export volunteer form submissions
- * Version: 1.2604130628
+ * Version: 1.0
  * Author: Jesse Shawl
  * Author URI: https://jesse.sh/
  * License: GPLv2 or later
  */
 
-require_once plugin_dir_path(__FILE__) . 'mock-gravity-forms.php';
+if (! class_exists('GFAPI')) {
+    require_once plugin_dir_path(__FILE__) . 'mock-gravity-forms.php';
+}
 
 class SFMF_Export
 {
