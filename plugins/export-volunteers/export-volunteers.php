@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Export Volunteers
  * Description: Allows editors to export volunteer form submissions
- * Version: 1.0+bac25e1
+ * Version: 1.0
  * Author: Jesse Shawl
  * Author URI: https://jesse.sh/
  * License: GPLv2 or later

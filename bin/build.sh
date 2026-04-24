@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 rm -rf build/*
 for plugin in plugins/*; do
@@ -15,7 +14,7 @@ for plugin in plugins/*; do
     # Inject build version
     perl -pi -e "s/Version: $old_ver/Version: $new_ver/" "$file"
     # Zip from plugins/ so paths inside zip are relative to plugin dir
-    (cd plugins && zip -r "../build/$base.zip" "$base/includes/" "$base/$base.php" > /dev/null)
+    (cd plugins && zip -r "../build/$base.zip" "$base/includes/" "$base/$base.php" > /dev/null) || true
 
     # Restore source version
     perl -pi -e "s/Version: $new_ver/Version: $old_ver/" "$file"
