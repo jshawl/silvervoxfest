@@ -10,12 +10,10 @@ for plugin in plugins/*; do
     new_ver="1.0+$sha"
 
     echo "Building $base $new_ver"
-
-    # Inject build version
     perl -pi -e "s/Version: $old_ver/Version: $new_ver/" "$file"
-    # Zip from plugins/ so paths inside zip are relative to plugin dir
+    echo "Zipping..."
     (cd plugins && zip -r "../build/$base.zip" "$base/includes/" "$base/$base.php" > /dev/null) || true
-
-    # Restore source version
-    perl -pi -e "s/Version: $new_ver/Version: $old_ver/" "$file"
+    echo "Restoring..."
+    perl -pi -e "s/Version: \Q$new_ver\E/Version: $old_ver/" "$file"
+    echo "Done"
 done
