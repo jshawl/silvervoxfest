@@ -11,6 +11,7 @@
         <input type="search" placeholder="Filter">
         <span class="dashicons dashicons-no-alt close-filter" aria-label="Close"></span>
       </div>
+      <div class="no-results hidden filter-item">No results.</div>
     </div>
     <div id="map-wrapper-inner">
       <div id="map"></div>

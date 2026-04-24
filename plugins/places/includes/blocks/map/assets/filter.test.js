@@ -54,6 +54,7 @@ describe("filter", () => {
       document.body.innerHTML = `<div class='map-filter'>
         <input/>
         <span class="close-filter"></span>
+        <div class="no-results hidden filter-item"></div>
       </div>`;
     });
     it("expands on click", () => {
@@ -139,6 +140,18 @@ describe("filter", () => {
       expect(
         container.querySelector("[data-filter-id='3']").classList,
       ).not.toContain("hidden");
+    });
+    it("shows no results", () => {
+      initializeFilter({
+        tree,
+        onSelect: vi.fn(),
+      });
+      const container = document.querySelector(".map-filter");
+      click(container);
+      const noResults = container.querySelector(".no-results");
+      expect(noResults.classList).toContain("hidden");
+      type(container.querySelector("input"), "never gonna give you up");
+      expect(noResults.classList).not.toContain("hidden");
     });
     it("only shows groups when the search is cleared", () => {
       initializeFilter({
