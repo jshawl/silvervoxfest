@@ -1,13 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# At the top of your script
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    SED="sed -i ''"
-else
-    SED="sed -i"
-fi
-
 rm -rf build/*
 for plugin in plugins/*; do
     base=$(basename "$plugin")
@@ -20,11 +13,10 @@ for plugin in plugins/*; do
     echo "Building $base $new_ver"
 
     # Inject build version
-    $SED -i '' "s/Version: $old_ver/Version: $new_ver/" "$file"
-
+    perl -pi -e "s/Version: $old_ver/Version: $new_ver/" "$file"
     # Zip from plugins/ so paths inside zip are relative to plugin dir
     (cd plugins && zip -r "../build/$base.zip" "$base/includes/" "$base/$base.php" > /dev/null)
 
     # Restore source version
-    $SED -i '' "s/Version: $new_ver/Version: $old_ver/" "$file"
+    perl -pi -e "s/Version: $new_ver/Version: $old_ver/" "$file"
 done

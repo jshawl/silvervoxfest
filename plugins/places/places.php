@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Places
  * Description: Adds the "Places" custom post type
- * Version: 1.0+2b8b794
+ * Version: 1.0+bac25e1+2b8b794
  * Author: Jesse Shawl
  * Author URI: https://jesse.sh/
  * License: GPLv2 or later
