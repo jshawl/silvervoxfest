@@ -1,6 +1,8 @@
 #!/bin/bash
 
 rm -rf build/*
+mkdir -p build/
+
 for plugin in plugins/*; do
     base=$(basename "$plugin")
     file="$plugin/$base.php"
