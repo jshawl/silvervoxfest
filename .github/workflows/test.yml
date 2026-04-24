@@ -1,4 +1,4 @@
-name: Test
+name: Build
 
 on:
   pull_request:
@@ -27,7 +27,7 @@ jobs:
         run: |
           gh release delete latest --yes --cleanup-tag 2>/dev/null || true
           gh release create latest build/*.zip \
-            --title "Latest build" \
+            --title "latest" \
             --prerelease \
             --notes "Auto-updated on every push"
   vitest:
