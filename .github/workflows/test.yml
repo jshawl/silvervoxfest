@@ -12,6 +12,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    needs: [vitest, phpunit]
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: write
     steps:
