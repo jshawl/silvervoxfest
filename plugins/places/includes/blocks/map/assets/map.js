@@ -6,6 +6,11 @@ let map;
 const fitBoundsOptions = { padding: 200 };
 
 export const initializeMap = ({ onMapLoad }) => {
+  if (!mapboxgl.accessToken) {
+    throw new Error(
+      "mapbox access token is undefined. Add one in the places plugin settings.",
+    );
+  }
   map = new mapboxgl.Map({
     container: "map",
     center: [-77.41054, 39.41427],

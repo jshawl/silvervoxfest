@@ -79,6 +79,10 @@ class AdminTest extends WP_UnitTestCase
         $admin = new SFMF_Admin(SFMF_PLUGIN_FILE);
 
         ob_start();
+        set_current_screen('options_page_sfmf_places_settings');
+        global $pagenow, $plugin_page;
+        $pagenow = 'options-general.php';
+        $plugin_page = 'sfmf_places_settings';
         $admin->settings_html();
         $output = ob_get_clean();
 
