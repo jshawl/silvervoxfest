@@ -5,8 +5,6 @@ class PostTest extends WP_UnitTestCase
     public function test_meta_boxes_are_registered()
     {
         wp_set_current_user($this->factory->user->create(['role' => 'administrator']));
-
-        new SFMF_Admin(SFMF_PLUGIN_FILE);
         do_action('add_meta_boxes');
 
         global $wp_meta_boxes;
@@ -35,7 +33,6 @@ class PostTest extends WP_UnitTestCase
 
     public function test_post_type_meta()
     {
-        new SFMF_Place(SFMF_PLUGIN_FILE);
         wp_set_current_user(
             $this->factory->user->create(["role" => "administrator"]),
         );
@@ -59,8 +56,6 @@ class PostTest extends WP_UnitTestCase
 
     public function test_rest_fields_are_registered()
     {
-        new SFMF_Place(SFMF_PLUGIN_FILE);
-
         do_action('rest_api_init');
 
         global $wp_rest_additional_fields;
