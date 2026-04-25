@@ -3,6 +3,8 @@
  */
 import { describe, expect, it, beforeEach, vi } from "vitest";
 import { initializeFilter } from "./filter";
+import { readFileSync } from "node:fs";
+import path from "path";
 
 vi.mock("@places/marker", async () => {
   return {
@@ -51,11 +53,13 @@ describe("filter", () => {
   ];
   describe("initializeFilter", () => {
     beforeEach(() => {
-      document.body.innerHTML = `<div class='map-filter'>
-        <input/>
-        <span class="close-filter"></span>
-        <div class="no-results hidden filter-item"></div>
-      </div>`;
+      const __dirname = import.meta.dirname;
+      const html = readFileSync(
+        path.resolve(__dirname, "../template.html"),
+        "utf-8",
+      );
+
+      document.body.innerHTML = html;
     });
     it("expands on click", () => {
       const container = document.querySelector(".map-filter");
