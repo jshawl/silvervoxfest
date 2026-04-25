@@ -23,6 +23,14 @@ class EnqueueTest extends WP_UnitTestCase
         $this->assertTrue(
             WP_Block_Type_Registry::get_instance()->is_registered('places/map')
         );
+        update_option("sfmf_places_settings", [
+            "sfmf_places_mapbox_access_token" => "pk.eyJ"
+        ]);
+        $block = new WP_Block([
+            'blockName' => 'places/map',
+        ]);
+        $output = $block->render();
+        $this->assertStringContainsString('mapboxAccessToken = "pk.eyJ"', $output);
     }
 }
 ?>

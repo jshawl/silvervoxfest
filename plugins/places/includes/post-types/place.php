@@ -6,6 +6,7 @@ class SFMF_Place
     {
         add_action('init', [$this, 'register']);
         add_action('save_post_place', [$this, 'save_meta']);
+        // TODO unregister cors
         add_action('rest_api_init', [$this, 'register_cors']);
         add_action('add_meta_boxes', [$this, 'register_meta_boxes']);
         add_action('rest_api_init', [$this, 'register_rest_fields'], 15);

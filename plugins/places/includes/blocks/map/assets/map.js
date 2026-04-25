@@ -1,7 +1,6 @@
 globalThis.mapboxgl ??= {};
-// TODO retrieve from admin ui
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiYW1ibGVhcHAiLCJhIjoiY21ucTViOTQyMDQyNzJxb2J6ODB4bWFwdiJ9.mfpPxQJXotqvIpUxXSZXjw";
+globalThis.SFMF ??= {};
+mapboxgl.accessToken = globalThis.SFMF.mapboxAccessToken;
 let map;
 
 const fitBoundsOptions = { padding: 200 };

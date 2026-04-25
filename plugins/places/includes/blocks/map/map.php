@@ -1,8 +1,6 @@
 <?php
 
 defined('ABSPATH') || exit;
-define('PLACES_MAP_DIR', plugin_dir_path(__FILE__));
-define('PLACES_MAP_URL', plugin_dir_url(__FILE__));
 
 class SFMF_Map
 {
@@ -13,6 +11,8 @@ class SFMF_Map
 
     public function register()
     {
+        $places_map_dir = plugin_dir_path(__FILE__);
+        $places_map_url = plugin_dir_url(__FILE__);
         wp_register_style(
             'map-mapbox-style',
             'https://api.mapbox.com/mapbox-gl-js/v3.20.0/mapbox-gl.css',
@@ -22,16 +22,16 @@ class SFMF_Map
 
         wp_register_style(
             'map-style',
-            PLACES_MAP_URL . 'assets/style.css',
+            $places_map_url . 'assets/style.css',
             ['map-mapbox-style'],
-            filemtime(PLACES_MAP_DIR . 'assets/style.css')
+            filemtime($places_map_dir . 'assets/style.css')
         );
 
         wp_register_script(
             'map-editor-script',
-            PLACES_MAP_URL . 'assets/editor.js',
+            $places_map_url . 'assets/editor.js',
             [ 'wp-blocks', 'wp-element', 'wp-block-editor' ],
-            filemtime(PLACES_MAP_DIR . 'assets/editor.js'),
+            filemtime($places_map_dir . 'assets/editor.js'),
             true
         );
 
@@ -45,30 +45,30 @@ class SFMF_Map
 
         wp_register_script_module(
             '@places/map',
-            PLACES_MAP_URL . 'assets/map.js',
+            $places_map_url . 'assets/map.js',
             [],
-            filemtime(PLACES_MAP_DIR . 'assets/map.js')
+            filemtime($places_map_dir . 'assets/map.js')
         );
 
         wp_register_script_module(
             '@places/marker',
-            PLACES_MAP_URL . 'assets/marker.js',
+            $places_map_url . 'assets/marker.js',
             [],
-            filemtime(PLACES_MAP_DIR . 'assets/marker.js')
+            filemtime($places_map_dir . 'assets/marker.js')
         );
 
         wp_register_script_module(
             '@places/filter',
-            PLACES_MAP_URL . 'assets/filter.js',
+            $places_map_url . 'assets/filter.js',
             [],
-            filemtime(PLACES_MAP_DIR . 'assets/filter.js')
+            filemtime($places_map_dir . 'assets/filter.js')
         );
 
         wp_register_script_module(
             '@places/view',
-            PLACES_MAP_URL . 'assets/view.js',
+            $places_map_url . 'assets/view.js',
             ['@places/map', '@places/marker', '@places/filter'],
-            filemtime(PLACES_MAP_DIR . 'assets/view.js')
+            filemtime($places_map_dir . 'assets/view.js')
         );
 
         add_filter('render_block_places/map', function ($content) {
@@ -77,6 +77,6 @@ class SFMF_Map
             return $content;
         });
 
-        register_block_type(PLACES_MAP_DIR);
+        register_block_type($places_map_dir);
     }
 }
