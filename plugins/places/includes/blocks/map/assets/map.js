@@ -1,12 +1,16 @@
 globalThis.mapboxgl ??= {};
-// TODO retrieve from admin ui
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiYW1ibGVhcHAiLCJhIjoiY21ucTViOTQyMDQyNzJxb2J6ODB4bWFwdiJ9.mfpPxQJXotqvIpUxXSZXjw";
+globalThis.SFMF ??= {};
+mapboxgl.accessToken = globalThis.SFMF.mapboxAccessToken;
 let map;
 
 const fitBoundsOptions = { padding: 200 };
 
 export const initializeMap = ({ onMapLoad }) => {
+  if (!mapboxgl.accessToken) {
+    throw new Error(
+      "mapbox access token is undefined. Add one in the places plugin settings.",
+    );
+  }
   map = new mapboxgl.Map({
     container: "map",
     center: [-77.41054, 39.41427],
