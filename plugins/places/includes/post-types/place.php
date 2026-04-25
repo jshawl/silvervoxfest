@@ -6,8 +6,6 @@ class SFMF_Place
     {
         add_action('init', [$this, 'register']);
         add_action('save_post_place', [$this, 'save_meta']);
-        // TODO unregister cors
-        add_action('rest_api_init', [$this, 'register_cors']);
         add_action('add_meta_boxes', [$this, 'register_meta_boxes']);
         add_action('rest_api_init', [$this, 'register_rest_fields'], 15);
         add_filter('use_block_editor_for_post_type', [$this, 'disable_block_editor'], 10, 2);
@@ -71,6 +69,7 @@ class SFMF_Place
 
     public function render_place_url_meta_box($post)
     {
+        wp_nonce_field('place_meta_nonce', 'place_nonce');
         $url = get_post_meta($post->ID, '_place_url', true);
         ?>
     <label>URL</label>
@@ -157,29 +156,6 @@ class SFMF_Place
         }
 
         return false;
-    }
-
-    public function register_cors()
-    {
-        remove_filter('rest_pre_serve_request', 'rest_send_cors_headers');
-
-        add_filter('rest_pre_serve_request', function ($value) {
-            $allowed = [
-                'https://silvervoxfest.com',
-                'https://jshawl.com',
-                'http://localhost:8888',
-            ];
-
-            $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
-            if (in_array($origin, $allowed)) {
-                header("Access-Control-Allow-Origin: {$origin}");
-                header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-                header('Access-Control-Allow-Headers: Authorization, Content-Type');
-            }
-
-            return $value;
-        });
     }
 
     public function register()
