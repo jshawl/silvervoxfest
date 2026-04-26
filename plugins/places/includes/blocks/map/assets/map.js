@@ -24,6 +24,8 @@ export const initializeMap = ({ accessToken, onMapLoad }) => {
       },
     },
   });
+  const nav = new mapboxgl.NavigationControl();
+  map.addControl(nav, "bottom-right");
 
   map.on("load", async () => onMapLoad(map));
 };
