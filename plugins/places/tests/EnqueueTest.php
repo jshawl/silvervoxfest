@@ -23,6 +23,10 @@ class EnqueueTest extends WP_UnitTestCase
         $this->assertTrue(
             WP_Block_Type_Registry::get_instance()->is_registered('places/map')
         );
+    }
+
+    public function test_block_renders()
+    {
         $block = new WP_Block([
             'blockName' => 'places/map',
         ]);
@@ -33,6 +37,17 @@ class EnqueueTest extends WP_UnitTestCase
         ]);
         $output = $block->render();
         $this->assertStringContainsString('mapboxAccessToken = "pk.eyJ"', $output);
+        $this->assertStringContainsString('height: 500px', $output);
+    }
+
+    public function test_block_height()
+    {
+        $block = new WP_Block([
+            'blockName' => 'places/map',
+            'attrs'     => ['height' => '123px']
+        ]);
+        $output = $block->render();
+        $this->assertStringContainsString('height: 123px', $output);
     }
 }
 ?>
