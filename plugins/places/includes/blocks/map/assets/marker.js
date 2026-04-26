@@ -19,12 +19,13 @@ export const createMarkers = ({ locations }) => {
 };
 
 export const ICON_MAP = {
-  coffee: { emoji: "☕️", label: "Coffee Shops" },
   bar: { emoji: "🍻", label: "Bars" },
-  restaurant: { emoji: "🍽️", label: "Restaurants" },
+  coffee: { emoji: "☕️", label: "Coffee Shops" },
   hotel: { emoji: "🏨", label: "Hotels" },
-  venue: { emoji: "🎭", label: "Venues" },
+  parking: { emoji: "🅿️", label: "Parking" },
+  restaurant: { emoji: "🍽️", label: "Restaurants" },
   shopping: { emoji: "🛍️", label: "Shopping" },
+  venue: { emoji: "🎭", label: "Venues" },
 };
 
 export const createMarker = (location) => {

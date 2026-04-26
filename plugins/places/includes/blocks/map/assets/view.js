@@ -6,13 +6,13 @@ export const getLocationTypes = (locations) => [
   ...new Set(locations.map((l) => l.type)),
 ];
 
-const getLabelForType = (type) => ICON_MAP[type.toLowerCase()]?.label;
+const getLabelForType = (type) => ICON_MAP[type.toLowerCase()]?.label ?? type;
 
 export const buildTree = ({ locations, markers }) =>
   getLocationTypes(locations)
     .map((type) => ({
       id: type,
-      label: `${ICON_MAP[type.toLowerCase()]?.emoji} ${getLabelForType(type)}`,
+      label: `${ICON_MAP[type.toLowerCase()]?.emoji ?? "📍"} ${getLabelForType(type)}`,
       children: markers
         .filter(({ location }) => location.type === type)
         .map(({ marker, location }) => ({

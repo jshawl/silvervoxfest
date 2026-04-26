@@ -15,5 +15,13 @@ describe("view", () => {
       expect(tree[0].id).toBe("Bar");
       expect(tree[2].id).toBe("Restaurant");
     });
+    it("gracefully degrades for unknown types", () => {
+      const tree = buildTree({
+        locations: [{ type: "Restaurant" }, { type: "An Unrecognized Type" }],
+        markers: [],
+      });
+      expect(tree[0].id).toBe("An Unrecognized Type");
+      expect(tree[0].label).toBe("📍 An Unrecognized Type");
+    });
   });
 });
