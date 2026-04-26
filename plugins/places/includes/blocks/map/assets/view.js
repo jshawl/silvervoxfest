@@ -59,7 +59,11 @@ const onMapLoad = async (map) => {
 };
 
 if (!("process" in globalThis)) {
+  const attribute = "data-mapbox-access-token";
+  const container = document.querySelector(`[${attribute}]`);
+  const accessToken = container.getAttribute(attribute);
   initializeMap({
+    accessToken,
     onMapLoad,
   });
 }

@@ -1,16 +1,15 @@
 globalThis.mapboxgl ??= {};
-globalThis.SFMF ??= {};
-mapboxgl.accessToken = globalThis.SFMF.mapboxAccessToken;
 let map;
 
 const fitBoundsOptions = { padding: 50 };
 
-export const initializeMap = ({ onMapLoad }) => {
-  if (!mapboxgl.accessToken) {
+export const initializeMap = ({ accessToken, onMapLoad }) => {
+  if (!accessToken) {
     throw new Error(
       "mapbox access token is undefined. Add one in the places plugin settings.",
     );
   }
+  mapboxgl.accessToken = accessToken;
   map = new mapboxgl.Map({
     container: "map",
     center: [-77.41054, 39.41427],

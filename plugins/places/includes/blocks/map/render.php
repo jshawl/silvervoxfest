@@ -5,17 +5,15 @@
 ?>
 
 <div <?php
-  $height = empty($attributes["height"]) ? "500px" : $attributes["height"];
-echo get_block_wrapper_attributes(["style" => "height: " . $height ]) ?>>
-  <script>
-    globalThis.SFMF ??= {};
-    <?php
-    $settings = get_option("sfmf_places_settings");
+ $settings = get_option("sfmf_places_settings");
+$token = "";
 if ($settings) {
     $token = $settings["sfmf_places_mapbox_access_token"];
-    echo "globalThis.SFMF.mapboxAccessToken = \"".$token."\"";
 }
-?>
-  </script>
+$height = empty($attributes["height"]) ? "500px" : $attributes["height"];
+echo get_block_wrapper_attributes([
+  "style"                    => "height: " . $height,
+  "data-mapbox-access-token" => $token
+  ]) ?>>
   <?php require_once plugin_dir_path(__FILE__) . "template.html"; ?>
 </div>

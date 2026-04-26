@@ -36,7 +36,7 @@ class EnqueueTest extends WP_UnitTestCase
             "sfmf_places_mapbox_access_token" => "pk.eyJ"
         ]);
         $output = $block->render();
-        $this->assertStringContainsString('mapboxAccessToken = "pk.eyJ"', $output);
+        $this->assertStringContainsString('data-mapbox-access-token="pk.eyJ', $output);
         $this->assertStringContainsString('height: 500px', $output);
     }
 
