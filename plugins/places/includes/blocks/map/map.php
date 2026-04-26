@@ -77,6 +77,10 @@ class SFMF_Map
             return $content;
         });
 
+        add_action('enqueue_block_editor_assets', function () {
+            wp_dequeue_script_module('@places/view');
+        });
+
         register_block_type($places_map_dir);
     }
 }

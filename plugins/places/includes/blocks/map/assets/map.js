@@ -3,7 +3,7 @@ globalThis.SFMF ??= {};
 mapboxgl.accessToken = globalThis.SFMF.mapboxAccessToken;
 let map;
 
-const fitBoundsOptions = { padding: 200 };
+const fitBoundsOptions = { padding: 50 };
 
 export const initializeMap = ({ onMapLoad }) => {
   if (!mapboxgl.accessToken) {

@@ -4,11 +4,13 @@
 /** @var WP_Block $block      */
 ?>
 
-<div <?php echo get_block_wrapper_attributes() ?>>
+<div <?php
+  $height = empty($attributes["height"]) ? "500px" : $attributes["height"];
+echo get_block_wrapper_attributes(["style" => "height: " . $height ]) ?>>
   <script>
-    globalThis.SFMF ??= {}
+    globalThis.SFMF ??= {};
     <?php
-      $settings = get_option("sfmf_places_settings");
+    $settings = get_option("sfmf_places_settings");
 if ($settings) {
     $token = $settings["sfmf_places_mapbox_access_token"];
     echo "globalThis.SFMF.mapboxAccessToken = \"".$token."\"";
