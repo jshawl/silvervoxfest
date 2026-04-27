@@ -16,12 +16,26 @@ if (! class_exists('GFAPI')) {
 class SFMF_Export
 {
     public const FORM_ID = 2;
-    public function __construct()
+    public function init()
     {
         add_action('wp_ajax_export_volunteers', [$this,'export_volunteers_handler']);
         add_action('admin_menu', [$this, 'add_settings_page']);
+        add_action('sfmf_cron_hook', [$this, 'send_csv_attachment']);
     }
 
+    public function activate()
+    {
+        if (! wp_next_scheduled('sfmf_cron_hook')) {
+            $next_send = strtotime('tuesday 00:10:00 UTC');
+            wp_schedule_event($next_send, 'weekly', 'sfmf_cron_hook');
+        }
+    }
+
+    public function deactivate()
+    {
+        $timestamp = wp_next_scheduled('sfmf_cron_hook');
+        wp_unschedule_event($timestamp, 'sfmf_cron_hook');
+    }
     public function add_settings_page()
     {
         add_management_page(
@@ -86,6 +100,30 @@ class SFMF_Export
         wp_die();
     }
 
+    public function send_csv_attachment()
+    {
+        $upload_dir = wp_upload_dir();
+        $filename = "volunteer-export-" . date('Y-m-d') . ".csv";
+        $file_path = $upload_dir['basedir'] . '/' . $filename;
+        $rows = $this->get_rows();
+        $headers = array_keys($rows[0]);
+        $content = join(",", $headers) . "\n";
+        foreach ($rows as $row) {
+            $content = $content . join(",", $row) . "\n";
+        }
+        file_put_contents($file_path, $content);
+        wp_mail(
+            'jesse@jesse.sh',
+            'Volunteer Export CSV',
+            'Please see the attached export.',
+            [],
+            [ $file_path ]
+        );
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
+    }
+
     public function get_rows()
     {
         $form = GFAPI::get_form(self::FORM_ID);
@@ -134,6 +172,8 @@ class SFMF_Export
     }
 }
 
-add_action("plugins_loaded", function () {
-    new SFMF_Export();
-});
+$export = new SFMF_Export();
+register_activation_hook(__FILE__, [$export, 'activate']);
+register_deactivation_hook(__FILE__, [$export, 'deactivate']);
+
+add_action('plugins_loaded', [$export, 'init']);

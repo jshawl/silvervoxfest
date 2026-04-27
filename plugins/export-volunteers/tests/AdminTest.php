@@ -3,13 +3,44 @@
 class AdminTest extends WP_UnitTestCase
 {
     private SFMF_Export $plugin;
+    private array $sent_emails;
     public function setUp(): void
     {
         parent::setUp();
         wp_set_current_user(
             WP_UnitTestCase_Base::factory()->user->create(["role" => "administrator"])
         );
+        add_action('wp_mail', function ($args) {
+            $this->sent_emails[] = $args;
+        });
         $this->plugin = new SFMF_Export();
+    }
+
+    public function test_cron_scheduled_on_activate()
+    {
+        $this->assertFalse(wp_next_scheduled('sfmf_cron_hook'));
+
+        $this->plugin->activate();
+        $this->assertNotFalse(wp_next_scheduled('sfmf_cron_hook'));
+
+        $this->plugin->deactivate();
+        $this->assertFalse(wp_next_scheduled('sfmf_cron_hook'));
+    }
+
+    public function test_init()
+    {
+        $export = new SFMF_Export();
+        $export->init();
+        $this->assertNotFalse(has_action('sfmf_cron_hook', [$export, 'send_csv_attachment']));
+    }
+
+    public function test_send_csv_attachment()
+    {
+        $this->plugin->activate();
+        do_action('sfmf_cron_hook');
+        $this->assertCount(1, $this->sent_emails);
+        $this->assertEquals('jesse@jesse.sh', $this->sent_emails[0]['to']);
+        $this->assertStringContainsString('Volunteer Export CSV', $this->sent_emails[0]['subject']);
     }
 
     public function test_menu()
