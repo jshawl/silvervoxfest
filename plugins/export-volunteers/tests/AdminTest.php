@@ -10,6 +10,7 @@ class AdminTest extends WP_UnitTestCase
         wp_set_current_user(
             WP_UnitTestCase_Base::factory()->user->create(["role" => "administrator"])
         );
+        $this->sent_emails = [];
         add_action('wp_mail', function ($args) {
             $this->sent_emails[] = $args;
         });
@@ -37,9 +38,10 @@ class AdminTest extends WP_UnitTestCase
     public function test_send_csv_attachment()
     {
         $this->plugin->activate();
+        update_option('sfmf_send_csv_attachment_to', 'hello@example.com');
         do_action('sfmf_cron_hook');
         $this->assertCount(1, $this->sent_emails);
-        $this->assertEquals('jesse@jesse.sh', $this->sent_emails[0]['to']);
+        $this->assertEquals('hello@example.com', $this->sent_emails[0]['to']);
         $this->assertStringContainsString('Volunteer Export CSV', $this->sent_emails[0]['subject']);
     }
 

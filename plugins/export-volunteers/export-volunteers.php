@@ -20,13 +20,14 @@ class SFMF_Export
     {
         add_action('wp_ajax_export_volunteers', [$this,'export_volunteers_handler']);
         add_action('admin_menu', [$this, 'add_settings_page']);
+        add_action('admin_init', [$this, 'register_settings']);
         add_action('sfmf_cron_hook', [$this, 'send_csv_attachment']);
     }
 
     public function activate()
     {
         if (! wp_next_scheduled('sfmf_cron_hook')) {
-            $next_send = strtotime('tuesday 00:21:00 UTC');
+            $next_send = strtotime('tuesday 10:00:00 UTC');
             wp_schedule_event($next_send, 'weekly', 'sfmf_cron_hook');
         }
     }
@@ -36,6 +37,7 @@ class SFMF_Export
         $timestamp = wp_next_scheduled('sfmf_cron_hook');
         wp_unschedule_event($timestamp, 'sfmf_cron_hook');
     }
+
     public function add_settings_page()
     {
         add_management_page(
@@ -45,6 +47,19 @@ class SFMF_Export
             'gf-export',
             [$this, 'settings_page_html']
         );
+    }
+
+    public function register_settings()
+    {
+        register_setting('sfmf_export_volunteers_settings', 'sfmf_send_csv_attachment_to', [
+            'type'              => 'string',
+            'sanitize_callback' => [$this, 'sanitize_email']
+        ]);
+    }
+
+    public function sanitize_email($input)
+    {
+        return sanitize_text_field($input);
     }
 
     public function get_entries()
@@ -71,9 +86,34 @@ class SFMF_Export
             <p class="notice">There are <?php echo $total_count; ?> total volunteers!
             <small><em>last submission <?php echo $time_ago; ?> ago</em></small></p>
             <a class="button button-primary" href="<?php echo esc_url($url); ?>">Download CSV</a>
+            <br /><br />
+            <hr />
+            <h2>Weekly Email Settings</h2>
+            <form method="post" action="options.php">
+            <?php settings_fields('sfmf_export_volunteers_settings'); ?>
+            <?php do_settings_sections('sfmf_send_csv_attachment_to'); ?>
+            <?php $value = get_option('sfmf_send_csv_attachment_to');?>
+            <table class="form-table">
+                <tr>
+                    <th scope="row">
+                        <label for="sfmf_send_csv_attachment_to">Send Emails To</label>
+                    </th>
+                    <td>
+                        <input
+                            type="email"
+                            id="sfmf_send_csv_attachment_to"
+                            name="sfmf_send_csv_attachment_to"
+                            value="<?php echo esc_attr($value); ?>"
+                            class="regular-text"
+                        />
+                    </td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
         </div><?php
         if (isset($_REQUEST["debug"])) { ?><pre><?php
-            $form = GFAPI::get_form(self::FORM_ID);
+        $form = GFAPI::get_form(self::FORM_ID);
             echo "DEBUG: fields\n";
             var_dump($form['fields']);
             echo "DEBUG: entries[0]\n";
@@ -113,9 +153,13 @@ class SFMF_Export
     {
         $upload_dir = wp_upload_dir();
         $file_path = $upload_dir['basedir'] . '/' . $this->get_csv_filename();
+        $to = get_option('sfmf_send_csv_attachment_to');
+        if (! $to) {
+            return;
+        }
         $this->write_csv($file_path);
         wp_mail(
-            'jesse@jesse.sh',
+            $to,
             'Volunteer Export CSV',
             'Please see the attached export.',
             [],
