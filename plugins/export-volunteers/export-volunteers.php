@@ -26,7 +26,7 @@ class SFMF_Export
     public function activate()
     {
         if (! wp_next_scheduled('sfmf_cron_hook')) {
-            $next_send = strtotime('tuesday 00:10:00 UTC');
+            $next_send = strtotime('tuesday 00:21:00 UTC');
             wp_schedule_event($next_send, 'weekly', 'sfmf_cron_hook');
         }
     }
@@ -86,32 +86,34 @@ class SFMF_Export
         if (! current_user_can('edit_others_posts')) {
             wp_die('Unauthorized', 403);
         }
+        header('Content-Type: text/csv');
+        header("Content-Disposition: attachment; filename=\"".  $this->get_csv_filename() ."\"");
+        $this->write_csv('php://output');
+        wp_die();
+    }
+
+    public function get_csv_filename()
+    {
+        return "volunteer-export-" . date('Y-m-d') . ".csv";
+    }
+
+    public function write_csv($output_str)
+    {
+        $output = fopen($output_str, 'w');
         $rows = $this->get_rows();
         $headers = array_keys($rows[0]);
-        header('Content-Type: text/csv');
-        $filename = "volunteer-export-" . date('Y-m-d') . ".csv";
-        header("Content-Disposition: attachment; filename=\"".  $filename ."\"");
-        $out = fopen('php://output', 'w');
-        fputcsv($out, $headers, ',', '"', '\\');
+        fputcsv($output, $headers, ',', '"', '\\');
         foreach ($rows as $row) {
-            fputcsv($out, $row, ',', '"', '\\');
+            fputcsv($output, $row, ',', '"', '\\');
         }
-        fclose($out);
-        wp_die();
+        fclose($output);
     }
 
     public function send_csv_attachment()
     {
         $upload_dir = wp_upload_dir();
-        $filename = "volunteer-export-" . date('Y-m-d') . ".csv";
-        $file_path = $upload_dir['basedir'] . '/' . $filename;
-        $rows = $this->get_rows();
-        $headers = array_keys($rows[0]);
-        $content = join(",", $headers) . "\n";
-        foreach ($rows as $row) {
-            $content = $content . join(",", $row) . "\n";
-        }
-        file_put_contents($file_path, $content);
+        $file_path = $upload_dir['basedir'] . '/' . $this->get_csv_filename();
+        $this->write_csv($file_path);
         wp_mail(
             'jesse@jesse.sh',
             'Volunteer Export CSV',
