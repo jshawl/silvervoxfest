@@ -9,7 +9,7 @@
  * License: GPLv2 or later
  */
 
-if (! class_exists('GFAPI')) {
+if (! class_exists('GFAPI') && file_exists(plugin_dir_path(__FILE__) . 'mock-gravity-forms.php')) {
     require_once plugin_dir_path(__FILE__) . 'mock-gravity-forms.php';
 }
 
