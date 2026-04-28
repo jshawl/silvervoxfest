@@ -27,7 +27,7 @@ class SFMF_Export
     public function activate()
     {
         if (! wp_next_scheduled('sfmf_cron_hook')) {
-            $next_send = strtotime('tuesday 9:15:00 UTC');
+            $next_send = strtotime('friday 21:00:00 UTC');
             wp_schedule_event($next_send, 'weekly', 'sfmf_cron_hook');
         }
     }
