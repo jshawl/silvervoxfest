@@ -100,7 +100,7 @@ class SFMF_Export
                     </th>
                     <td>
                         <input
-                            type="email"
+                            type="text"
                             id="sfmf_send_csv_attachment_to"
                             name="sfmf_send_csv_attachment_to"
                             value="<?php echo esc_attr($value); ?>"
